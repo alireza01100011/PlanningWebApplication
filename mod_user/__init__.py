@@ -5,4 +5,5 @@ from app import app
 user = Blueprint('admin', __name__,
                   url_prefix='/admin/')
 
+from .models import *
 from .routes import *

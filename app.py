@@ -4,7 +4,7 @@ from flask_migrate import Migrate
 from config import Configs
 from flask_bcrypt import Bcrypt
 
-app = Flask(__name__)
+app = Flask(__name__, template_folder='templates')
 app.config.from_object(Configs)
 
 db = SQLAlchemy()

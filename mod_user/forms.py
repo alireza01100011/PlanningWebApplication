@@ -13,8 +13,11 @@ from .models import User
 
 
 class LoginForm(FlaskForm):
-    email = StringField('Enter Your Email() : ', validators=(DataRequired(), Email()))
-    password = PasswordField('Enter Your Password : ',validators=(DataRequired(),))
+    email = StringField('Enter Your Email : ',
+                        validators=(DataRequired(), Email()), description='email@gmail.com')
+    
+    password = PasswordField('Enter Your Password : ',
+                             validators=(DataRequired(),), description='*'*8)
 
     def validate_email(self , email):
         user = User.query.filter(User.email.ilike(f'{email.data}')).first()
@@ -27,15 +30,15 @@ class LoginForm(FlaskForm):
 
 class RegisterForm(FlaskForm):
     full_name = StringField('Enter Your Full Name : ',
-                            validators=(DataRequired()))
-    email = StringField('Enter Your Email() : ',
-                        validators=(DataRequired(), Email()))
+                            validators=(DataRequired(),), description='Full Name')
+    email = StringField('Enter Your Email : ',
+                        validators=(DataRequired(), Email()), description='email@gmail.com')
     password = PasswordField('Enter Your Password : ',
-                             validators=(DataRequired(), Length(8,128)))
+                             validators=(DataRequired(), Length(8,128)), description='*'*8)
     confirm_password = PasswordField(
         name='Confirm Your Password :',
         validators=(DataRequired(),
-                    Length(8,128), EqualTo('confirm_password')))
+                    Length(8,128), EqualTo('confirm_password')), description='*'*8)
     
     def validate_email(email):
         _ = User.query.filter(

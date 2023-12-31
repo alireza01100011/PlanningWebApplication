@@ -70,3 +70,16 @@ def register():
 
     return render_template('user/register.html', title='Register',
                            form=form)
+
+
+@user.route('logout/', methods=['GET'])
+@login_required
+def logout():
+    user = current_user
+    if not user :
+        flash('A rare problem occurred, logout failed! Try again ...')
+        return redirect(url_for('user.profile'))
+    
+    logout_user()
+    flash('Logout was successful.')
+    return redirect('/')

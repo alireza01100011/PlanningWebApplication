@@ -45,14 +45,25 @@
                             action="{{ request.path }}" method="post">
                         {{ form.hidden_tag() }}
 
-                        {% for field in form if field.widget.input_type != 'hidden' %}
+                        {% for field in form if not field.widget.input_type == 'hidden'  %}
                             
-                            <div class="form-group">
-                                {{field.label(class="col-md-12")}}
-                                <div class="col-md-12">
-                                    {{ field(class="form-control form-control-line", placeholder=field.description) }}
+                            {% if field.widget.input_type == 'checkbox' %}
+                                <div class="form-group form-check">
+                                    {{field.label(class="form-check-label")}}
+                                    {{field(class="form-check-input")}}
                                 </div>
-                            </div>
+                            {% endif %}
+                            
+                            {% if field.widget.input_type in ['text', 'password'] %}
+                                <div class="form-group">
+                                    {{field.label(class="col-md-12")}}
+                                    <div class="col-md-12">
+                                        {{ field(class="form-control form-control-line", placeholder=field.description) }}
+                                    </div>
+                                </div>
+                            {% endif %}
+
+                            
 
                         {% endfor %}
 

@@ -23,6 +23,17 @@ def login():
         if not form.validate_on_submit():
             return render_template('user/login.html', title='Login', form=form)
 
+        user = User.query.filter(User.email.ilike(f'{form.email.data}')).first()
+        if not user:
+            flash("Something went wrong. Please try again")
+            return render_template('user/login.html', title='Login', form=form)
+        
+        login_user(user, remember=form.remember.data)
+        flash('You have successfully logged in' , 'info')
+        __next = request.args.get('next', type=str,
+                                  default=url_for('user.profile'))
+        return redirect(__next)
+
     return render_template('user/login.html', title='Login',
                            form=form)
 

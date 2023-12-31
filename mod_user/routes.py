@@ -1,6 +1,6 @@
 from flask import ( flash, url_for, redirect,
                     render_template, abort, request)
-from flask_login import login_user, logout_user, login_required, current_user
+from flask_login import login_user, logout_user, current_user
 
 from sqlalchemy.exc import IntegrityError
 
@@ -10,13 +10,13 @@ from .forms import LoginForm, RegisterForm
 
 from app import db, bcrypt
 
-from utlis.flask_login import not_logged_in
+from utlis.flask_login import not_logged_in, login_required
 
 @user.route('/', methods=['GET'])
+@login_required(_next='/profile/')
 def profile():
-    if not current_user.is_authenticated:
-        return redirect(url_for('user.login', next=url_for('user.profile')))
-    return f'Hi , {current_user.full_name}'
+
+    return render_template('user/profile.html')
 
 
 @user.route('login/', methods=['GET', 'POST'])
@@ -73,7 +73,7 @@ def register():
 
 
 @user.route('logout/', methods=['GET'])
-@login_required
+@login_required()
 def logout():
     user = current_user
     if not user :

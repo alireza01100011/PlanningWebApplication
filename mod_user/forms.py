@@ -38,7 +38,7 @@ class RegisterForm(FlaskForm):
     confirm_password = PasswordField(
         name='Confirm Your Password :',
         validators=(DataRequired(),
-                    Length(8,128), EqualTo('confirm_password')), description='*'*8)
+                    Length(8,128), EqualTo('password')), description='*'*8)
     
     def validate_email_(email):
         _ = User.query.filter(

@@ -10,13 +10,17 @@ from .forms import LoginForm, RegisterForm
 
 from app import db, bcrypt
 
+from utlis.flask_login import not_logged_in
+
 @user.route('/', methods=['GET'])
 def profile():
     if not current_user.is_authenticated:
         return redirect(url_for('user.login', next=url_for('user.profile')))
-    return f'profile <br> Hi,{current_user.full_name}'
+    return f'Hi , {current_user.full_name}'
+
 
 @user.route('login/', methods=['GET', 'POST'])
+@not_logged_in('user.profile')
 def login():
     form = LoginForm()
     if request.method == 'POST':
@@ -39,6 +43,7 @@ def login():
 
 
 @user.route('register/', methods=['GET', 'POST'])
+@not_logged_in('user.profile')
 def register():
     form = RegisterForm()
     if request.method == 'POST':

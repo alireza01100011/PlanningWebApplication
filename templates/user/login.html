@@ -42,7 +42,7 @@
             <div class="card">
                 <div class="card-body">
                     <form class="form-horizontal form-material mx-2" 
-                            action="{{ request.path }}" method="post">
+                            action="{{ request.full_path }}" method="post">
                         {{ form.hidden_tag() }}
 
                         {% for field in form if not field.widget.input_type == 'hidden'  %}

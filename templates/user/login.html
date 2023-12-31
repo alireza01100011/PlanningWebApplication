@@ -8,33 +8,6 @@
 
 
 
-
-<!-- ============================================================== -->
-<!-- Bread crumb and right sidebar toggle -->
-<!-- ============================================================== -->
-<div class="page-breadcrumb">
-    <div class="row align-items-center">
-        <div class="col-5">
-            <h4 class="page-title">{{ title }}</h4>
-            <div class="d-flex align-items-center">
-                <nav aria-label="breadcrumb">
-                    <ol class="breadcrumb">
-                        {% for url in request.path.split('/')[1:-2] %}
-                            
-                            <li class="breadcrumb-item" aria-current="page" style="text-transform: capitalize;">
-                                {{ url }}</li>
-                        {% endfor %}
-                        <li class="breadcrumb-item active" aria-current="page" style="text-transform: capitalize;">
-                            {{ request.path.split('/')[-2] }}
-                        </li>
-                    </ol>
-                </nav>
-            </div>
-        </div>
-    </div>
-</div>
-
-
 <div class="container-fluid">
 
     <div class="row">

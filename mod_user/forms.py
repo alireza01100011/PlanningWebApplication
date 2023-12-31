@@ -1,7 +1,7 @@
 import re
 
 from flask_wtf import FlaskForm
-from wtforms.fields import (StringField, PasswordField)
+from wtforms.fields import (StringField, PasswordField, BooleanField)
 from wtforms.validators import (DataRequired, Email, EqualTo,
                                  Length, ValidationError)
 
@@ -18,10 +18,10 @@ class LoginForm(FlaskForm):
     
     password = PasswordField('Enter Your Password : ',
                              validators=(DataRequired(),), description='*'*8)
-
-    def validate_email(self , email):
+    remember = BooleanField('Remember', default=False)
+    def validate_email(self, email):
         user = User.query.filter(User.email.ilike(f'{email.data}')).first()
-        if not user or not bcrypt.check_password_hash(user.password , self.password.data) :
+        if (not user) or (not bcrypt.check_password_hash(user.password , self.password.data)) :
             raise ValidationError('The email or password is incorrect')
     
     def get_fields(self):
@@ -40,7 +40,7 @@ class RegisterForm(FlaskForm):
         validators=(DataRequired(),
                     Length(8,128), EqualTo('confirm_password')), description='*'*8)
     
-    def validate_email(email):
+    def validate_email_(email):
         _ = User.query.filter(
                 User.email.ilike(f'{email.date}'))
         if _:

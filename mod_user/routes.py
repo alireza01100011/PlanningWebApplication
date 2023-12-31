@@ -48,7 +48,7 @@ def register():
     form = RegisterForm()
     if request.method == 'POST':
         if not form.validate_on_submit():
-            return render_template('user/login.html', title='Login', form=form)
+            return render_template('user/login.html', title='Register', form=form)
 
         NewUser = User(
             full_name=form.full_name.data,

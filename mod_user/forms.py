@@ -4,7 +4,7 @@ from flask_wtf import FlaskForm
 from wtforms.fields import (StringField, PasswordField, BooleanField)
 from wtforms.validators import (DataRequired, Email, EqualTo,
                                  Length, ValidationError)
-
+from wtforms.widgets import PasswordInput
 from utlis.forms import _get_fields
 
 from app import bcrypt
@@ -48,3 +48,38 @@ class RegisterForm(FlaskForm):
     
     def get_fields(self):
         return _get_fields(self)
+
+
+
+class SettingForm(FlaskForm):
+    full_name = StringField('Your Full Name : ',
+                        validators=(DataRequired(),), description='Full Name')
+    email = StringField('Your Email : ',
+                        validators=(DataRequired(), Email()), description='email@gmail.com')
+    
+    old_password = StringField('Enter Your Old Password : ',
+                            validators=(DataRequired(), Length(8,128)),
+                            widget=PasswordInput(hide_value=False))
+    
+    password = StringField('Enter Your New Password : ',
+                            validators=(DataRequired(), Length(8,128)),
+                            widget=PasswordInput(hide_value=False))
+    
+    confirm_password = StringField( name='Confirm Your New Password :',
+                        validators=(DataRequired(), Length(8,128), EqualTo('password')),
+                        widget=PasswordInput(hide_value=False))
+
+    # def validate_old_password(old_password):
+    #     if old_password.data == '*'*8:
+    #         raise ValidationError('The password must not be (********).')
+    
+    # def validate_password(password):
+    #     if password.data == '*'*8:
+    #         raise ValidationError('The password must not be (********).')
+    
+    # def validate_confirm_password(confirm_password):
+    #     if confirm_password.data == '*'*8:
+    #         raise ValidationError('The password must not be (********).')
+    
+    
+    

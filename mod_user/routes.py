@@ -6,14 +6,14 @@ from sqlalchemy.exc import IntegrityError
 
 from . import user
 from .models import User
-from .forms import LoginForm, RegisterForm
+from .forms import LoginForm, RegisterForm, SettingForm
 
 from app import db, bcrypt
 
 from utlis.flask_login import not_logged_in, login_required
 
 @user.route('/', methods=['GET'])
-@login_required(_next='/profile/')
+@login_required(_next_url='/profile/')
 def profile():
 
     return render_template('user/profile.html')
@@ -49,7 +49,9 @@ def register():
     if request.method == 'POST':
         if not form.validate_on_submit():
             return render_template('user/login.html', title='Register', form=form)
-
+        
+        # Remaining: Email confirmation must be added
+        
         NewUser = User(
             full_name=form.full_name.data,
             email=form.email.data,
@@ -83,3 +85,63 @@ def logout():
     logout_user()
     flash('Logout was successful.')
     return redirect('/')
+
+
+@user.route('settings/', methods=['GET', 'POST'])
+@login_required(_next_endpoint='user.settings')
+def settings():
+    form  = SettingForm()
+    user = current_user
+    if request.method == 'GET':
+        form.email.data = user.email
+        form.full_name.data = user.full_name
+        
+        form.old_password.data, form.password.data,\
+            form.confirm_password.data  = '*'*8, '*'*8, '*'*8
+        
+    if request.method == 'POST':
+        if not form.validate_on_submit():
+            return render_template('user/settings.html', title='Setting Account',
+                        form=form, submit_button='Update')
+        
+        user.full_name = form.full_name.data
+
+        # Checks that in the password fields ([not 8 stars] : '*'*8 )
+        _password_not_asterisk = '*'*8 in [form.confirm_password.data, 
+                                           form.old_password.data, form.password.data]
+        
+        # Checks that the user has entered the account password correctly
+        _password_must_be_correct = bcrypt.check_password_hash(
+                                    user.password, form.old_password.data)\
+                                    if not _password_not_asterisk else False
+        
+        if _password_must_be_correct :
+            user.password = bcrypt.generate_password_hash(form.password.data)
+    
+        if not form.email.data == user.email:
+            # Remaining: Email confirmation must be added
+            user.email = form.email.data
+
+        try:
+            db.session.commit()
+        except IntegrityError:
+            flash('Updating your profile information failed! Please try again.')
+            db.session.rollback()
+        else:
+            flash('Your profile information has been successfully updated .')
+            
+            if _password_must_be_correct:
+                flash('Your password has been successfully updated .')
+
+    return render_template('user/settings.html', title='Setting Account',
+                           form=form, submit_button='Update')
+
+
+
+
+
+
+
+
+
+

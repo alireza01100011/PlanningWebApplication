@@ -18,7 +18,8 @@ def not_logged_in(_redirect:str):
     return getfunc
 
 def login_required(
-        _next:str=None,
+        _next_endpoint:str=None,
+        _next_url:str=None,
         _login_path:str='user.login',
         _f_msg:str = 'You do not have access, login first !',
         _f_cat:str='message'
@@ -31,10 +32,14 @@ def login_required(
             
             flash(message=_f_msg, category=_f_cat)
             
-            if _login_path:
+            if (_login_path) and (not _next_endpoint):
                 return redirect(
-                    url_for(_login_path, next=_next))
-
+                    url_for(_login_path, next=_next_url))
+            
+            if (_login_path) and (not _next_url):
+                return redirect(
+                    url_for(_login_path, next=url_for(_next_endpoint)))
+            
             return abort(401)
         return wrapper
     return getfunc

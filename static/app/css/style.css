@@ -101,11 +101,7 @@ a:not([href]):not([tabindex]):focus {
   outline: 0
 }
 
-[type=button],
-[type=reset],
-[type=submit] {
-  -webkit-appearance: button
-}
+
 
 [type=button]:not(:disabled),
 [type=reset]:not(:disabled),
@@ -148,10 +144,11 @@ a:not([href]):not([tabindex]):focus {
   padding-right: 15px;
   padding-left: 15px;
   margin-right: auto;
-  margin-left: auto
+  margin-left: auto;
+  max-width: 1280px
 }
 
-@media (min-width:576px) {
+/* @media (min-width:576px) {
   .container {
     max-width: 540px
   }
@@ -171,9 +168,9 @@ a:not([href]):not([tabindex]):focus {
 
 @media (min-width:1200px) {
   .container {
-    max-width: 1140px
+    max-width: 1080px
   }
-}
+} */
 
 .order-last {
   -webkit-box-ordinal-group: 14;

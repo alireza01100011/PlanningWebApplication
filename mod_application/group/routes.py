@@ -98,5 +98,24 @@ def edit(id:int):
 
 @group.route('/remove/<int:id>')
 def remove(id:int):
-    # todo : Remve group
-    return 'remove group'
+    group_manager = GroupManager()
+    group_manager.set_groups(loads(current_user.groups))
+
+    if not  group_manager.groups.get(int(id)) :
+        del group_manager # Free up the RAM
+        return abort(404)
+    
+    group_manager.delete_group(int(id))
+
+    current_user.group = group_manager.return_group_in_pickle
+    del group_manager # Free up the RAM
+    try:
+        db.session.commit()
+            
+    except IndentationError:
+        db.session.rollback()
+        flash('Something went wrong, please try again', category='error')
+    
+    else:
+        flash('Group delete successfully', category='success')
+        redirect(url_for('group.manage'))

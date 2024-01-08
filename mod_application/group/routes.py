@@ -13,8 +13,14 @@ from app import db
 
 @group.route('/')
 def manage():
-    # todo : Manage Groups
-    return 'Group List'
+    group_manager = GroupManager()
+    group_manager.set_groups(loads(current_user.groups))
+
+    list_group = group_manager.list_groups
+    del group_manager # Free up the RAM
+
+    return render_template('', title='Groups',
+                            groups=list_group)
 
 
 @group.route('/add', methods=['GET', 'POST'])
@@ -24,7 +30,8 @@ def add():
     if request.method == 'POST':
         if not form.validate_on_submit():
             flash('Invalid forum', category='error')
-            return render_template('', title='Create New Group', form=form)
+            return render_template('',
+                    title='Create New Group',form=form)
         
         group_manager = GroupManager()
         group_manager.set_groups(loads(current_user.groups))

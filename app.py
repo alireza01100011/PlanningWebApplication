@@ -19,7 +19,11 @@ from mod_user.user import user
 from mod_user.admin import admin
 
 from mod_application.task import task
+from mod_application.group import group
+
 app.register_blueprint(admin)
-app.register_blueprint(task)
 app.register_blueprint(user)
+app.register_blueprint(group)
+app.register_blueprint(task)
+
 

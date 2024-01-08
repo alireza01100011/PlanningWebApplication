@@ -15,7 +15,9 @@ class User(db.Model, UserMixin):
     email = Column(String(128), unique=True, nullable=False)
     password = Column(String(256), unique=False, nullable=False)
     roll = Column(Integer, default=0, unique=False)
+    groups = Column(Text, nullable=False, unique=False)
     todos = db.relationship('Todo', backref='user')
+    todos = db.relationship('Event', backref='user')
 
     def __init__(self, full_name:str, email:str, password:str,
                  roll:int=0) -> None:
@@ -32,4 +34,10 @@ class Todo(db.Model):
     __tablename__ = 'todos'
     id = Column(Integer, unique=True, primary_key=True)
     tasks = Column(Text, unique=False, nullable=True)
+    user_id = Column(Integer, ForeignKey('users.id'), unique=True)
+
+class Event(db.Model):
+    __tablename__ = 'events'
+    id = Column(Integer, unique=True, primary_key=True)
+    events = Column(Text, unique=False, nullable=True)
     user_id = Column(Integer, ForeignKey('users.id'), unique=True)

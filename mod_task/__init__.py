@@ -2,8 +2,8 @@ from flask import Blueprint
 
 from app import app
 
-todo = Blueprint('todo', __name__,
-                 url_prefix='/')
+task = Blueprint('task', __name__,
+                 url_prefix='/task/')
 
 from .models import *
 from .routes import *

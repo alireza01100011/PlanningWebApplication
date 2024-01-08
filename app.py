@@ -16,10 +16,10 @@ migrate = Migrate(app, db)
 bcrypt = Bcrypt(app)
 
 from mod_admin import admin
-from mod_app import todo
+from mod_task import task
 from mod_user import user
 
 app.register_blueprint(admin)
-app.register_blueprint(todo)
+app.register_blueprint(task)
 app.register_blueprint(user)
 

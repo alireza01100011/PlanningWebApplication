@@ -16,8 +16,8 @@ class User(db.Model, UserMixin):
     password = Column(String(256), unique=False, nullable=False)
     roll = Column(Integer, default=0, unique=False)
     groups = Column(Text, nullable=False, unique=False)
-    todos = db.relationship('Todo', backref='user')
-    todos = db.relationship('Event', backref='user')
+    tasks = db.relationship('Task', backref='user')
+    events = db.relationship('Event', backref='user')
 
     def __init__(self, full_name:str, email:str, password:str,
                  roll:int=0) -> None:
@@ -30,8 +30,8 @@ class User(db.Model, UserMixin):
     def __repr__(self):
         return f'{__name__.__class__.__name__}< id:{self.id} - email:{self.email} - roll:{self.roll}>'
     
-class Todo(db.Model):
-    __tablename__ = 'todos'
+class Task(db.Model):
+    __tablename__ = 'tasks'
     id = Column(Integer, unique=True, primary_key=True)
     tasks = Column(Text, unique=False, nullable=True)
     user_id = Column(Integer, ForeignKey('users.id'), unique=True)

@@ -1,5 +1,5 @@
 """ 
-Manages tasks (Todos)
+Manages tasks (Tasks)
 
 - Add Task
 - Update Task

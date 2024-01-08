@@ -1,13 +1,13 @@
 import unittest
 import pickle
 
-import todo
+import task
 
 class TestTasks(unittest.TestCase):
 
     @classmethod
     def setUpClass(cls) -> None:
-        cls.tasks = todo.TasksManager()
+        cls.tasks = task.TasksManager()
         cls.add_n = 5
         for _i in range(1, cls.add_n):
             name, t_s= f'task_{_i}', 1702999710

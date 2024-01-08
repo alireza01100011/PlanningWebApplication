@@ -17,7 +17,7 @@ def manage():
     return 'Group List'
 
 
-@group.route('/add')
+@group.route('/add', methods=['GET', 'POST'])
 def add():
     form = GroupForm()
     
@@ -49,7 +49,7 @@ def add():
 
 
 
-@groups.route('/edit/<int:id>')
+@group.route('/edit/<int:id>', methods=['GET', 'POST'])
 def edit(id:int):
     form = GroupForm()
     group_manager = GroupManager()

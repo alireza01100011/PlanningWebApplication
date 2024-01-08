@@ -12,7 +12,7 @@ class Testevents(unittest.TestCase):
         for _i in range(1, cls.add_n):
             title, des, t_s, t_e, group, r, color= \
                 f'event_{_i}', f'event_{_i}' , 1702999710, 1703000710, \
-                '1-group', [], '#fff47'
+                0, [], '#fff47'
             cls.event_manager.add_event(title, des, t_s, t_e, group, r, color)
 
     def test_list_events(self):
@@ -33,20 +33,20 @@ class Testevents(unittest.TestCase):
         start_time = 125487
         end_time = 115487
         description = 'new description'
-        group = '2grpu'
+        group_id = 1
         color = '#1254'
         reminders = [1564,100,60]
         self.event_manager.update_event(id,
                                         title=title, start_time=start_time,
                                         end_time=end_time, description=description,
-                                        group=group, color=color, reminders=reminders)
+                                        group_id=group_id, color=color, reminders=reminders)
         event = self.event_manager.events[id]
         self.assertEqual(event.id, id)
         self.assertEqual(event.title, title)
         self.assertEqual(event.start_time, start_time)
         self.assertEqual(event.end_time, end_time)
         self.assertEqual(event.description, description)
-        self.assertEqual(event.group, group)
+        self.assertEqual(event.group_id, group_id)
         self.assertEqual(event.color, color)
         self.assertEqual(event.reminders, reminders)
     

@@ -10,19 +10,22 @@ Manages tasks (Todos)
 """
 from pickle import loads, dumps
 
+from group import _Group
 class _Task:
-    __slots__ = ["id", "name", "time_start", "done"]
-    def __init__(self, id:int,
+    __slots__ = ["id", "name", "time_start", "done", "group_id"]
+    def __init__(self, id:int, group_id:int|None,
                  name:str , time_start:int, done:bool=False)-> None:
         self.id = id
         self.name = name
         self.time_start = time_start
         self.done = done
+        self.group_id = group_id or 0
 
 
 class TasksManager:
     def __init__(self):
         self.tasks:dict[int, _Task] = dict()
+        self.last_id = 0
     #  End Function
     
     @property
@@ -37,11 +40,21 @@ class TasksManager:
 
     def set_tasks(self, tasks:list[_Task] )-> None:
         for task in tasks: self.tasks[task.id] = task
+        self.last_id = len(self.tasks)
     #  End Function
         
-    def add_task(self, name:str, time_start:int)-> None:
-        _id = len(self.tasks) + 1
-        self.tasks[_id] = _Task(_id ,name, time_start)
+    def add_task(self, name:str,
+                time_start:int, group_id:int=0)-> None:
+        
+        while True:
+            self.last_id += 1
+            if not self.tasks.get(self.last_id):
+                break
+
+
+
+        self.tasks[self.last_id] = _Task(id=self.last_id ,name=name,
+                            time_start=time_start, group_id=group_id)
     #  End Function
         
     def done_task(self, id:int):
@@ -50,10 +63,14 @@ class TasksManager:
         
     def update_task(self,
                     id:int, name:str=None,
-                    time_start:int=None):
+                    time_start:int=None, group_id:int=0):
         _task = self.tasks.get(id)
-        _task.name = name or _task.name 
+        _task.name = name or _task.name
         _task.time_start = time_start or _task.time_start
+        _task.group_id = group_id or _task.group_id
+        
+
+
         self.tasks[id] = _task; del _task
     #  End Function 
         

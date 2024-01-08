@@ -15,10 +15,10 @@ login_manager = LoginManager(app)
 migrate = Migrate(app, db)
 bcrypt = Bcrypt(app)
 
-from mod_admin import admin
-from mod_task import task
-from mod_user import user
+from mod_user.user import user
+from mod_user.admin import admin
 
+from mod_application.task import task
 app.register_blueprint(admin)
 app.register_blueprint(task)
 app.register_blueprint(user)

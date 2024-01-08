@@ -2,7 +2,7 @@ from flask import (render_template, abort, request)
 
 from .models import Task
 from .forms import TaskForm
-from mod_task import task
+from . import task
 from utlis.flask_login import login_required
 
 @task.route('/')

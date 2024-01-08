@@ -4,7 +4,7 @@ from wtforms.fields import StringField, TextAreaField, SelectField
 
 from utlis.forms import _get_fields, MultiCheckboxField
 
-from mod_user.forms import User
+from mod_user.user.forms import User
 
 
 class TaskForm(FlaskForm):

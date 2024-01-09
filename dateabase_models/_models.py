@@ -30,11 +30,19 @@ class User(db.Model, UserMixin):
     def __repr__(self):
         return f'{__name__.__class__.__name__}< id:{self.id} - email:{self.email} - roll:{self.roll}>'
     
+
 class Task(db.Model):
     __tablename__ = 'tasks'
     id = Column(Integer, unique=True, primary_key=True)
     tasks = Column(Text, unique=False, nullable=True)
     user_id = Column(Integer, ForeignKey('users.id'), unique=True)
+
+    def __init__(self, tasks:str):
+        self.tasks = tasks
+    
+    def __repr__(self):
+        return f'{__name__.__class__.__name__}< id:{self.id} - user_id:{self.user_id} >'
+    
 
 class Event(db.Model):
     __tablename__ = 'events'

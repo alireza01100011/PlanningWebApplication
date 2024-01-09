@@ -14,7 +14,14 @@ class _Group(object):
 class GroupManager():
     def __init__(self):
         self.groups:dict[int, _Group] = dict()
-        self.last_id = 0
+        self.last_id = 1
+        # Default
+        self.group[0] = _Group(
+                id=0,
+                title='defualt',
+                description='default',
+                color='#ffff')
+
     #  End Function
         
     @property

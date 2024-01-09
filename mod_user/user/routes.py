@@ -11,6 +11,11 @@ from .forms import LoginForm, RegisterForm, SettingForm
 from app import db, bcrypt
 
 from utlis.flask_login import not_logged_in, login_required
+from mod_application.memory_management.group import GroupManager
+from mod_application.memory_management.task import TasksManager
+from mod_application.memory_management.event import EventManager
+
+from dateabase_models._models import Event, Task
 
 @user.route('/', methods=['GET'])
 @login_required(_next_url='/profile/')
@@ -56,16 +61,30 @@ def register():
             full_name=form.full_name.data,
             email=form.email.data,
             password=bcrypt.generate_password_hash(
-                password=form.password.data)
+                            password=form.password.data)
             )
         
+        NewUser.groups = GroupManager().return_group_in_pickle
+        
+        # Create Roll Task And Event 
+        NewTask = Task(
+            TasksManager().return_tasks_in_pickle)
+        NewEvent = Event(
+            TasksManager().return_tasks_in_pickle)
+
+        # Create Relation 
+        NewTask.user = NewUser
+        NewEvent.user = NewUser
+
         try:
-            db.session.add(NewUser)
+            db.session.add_all([NewEvent, NewTask, NewUser])
             db.session.commit()
+
         except IntegrityError:
             db.session.rollback()
             flash('Error! Try again (probably because the email you entered already exists)')
             return render_template('user/register.html', title='Register', form=form)
+
         else:
             flash('Your account has been created successfully')
             return redirect(url_for('user.login'))

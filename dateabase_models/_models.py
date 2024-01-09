@@ -49,3 +49,11 @@ class Event(db.Model):
     id = Column(Integer, unique=True, primary_key=True)
     events = Column(Text, unique=False, nullable=True)
     user_id = Column(Integer, ForeignKey('users.id'), unique=True)
+
+    def __init__(self, events:str):
+        self.events = events
+
+    def __rapr__(self):
+        return f'{__name__.__class__.__name__} < id:{self.id} - user_id{self.user_id} > '
+
+

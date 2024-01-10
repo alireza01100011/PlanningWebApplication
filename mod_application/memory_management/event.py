@@ -36,9 +36,14 @@ class _Event():
 
 
 class EventManager():
-    def __init__(self):
+    def __init__(self, pickle_data:bytes=None):
         self.events:dict[int, _Event] = dict()
         self.last_id = 0
+
+        if pickle_data:
+            self.set_events(
+                loads(pickle_data))
+        
     #  End Function
         
     @property

@@ -7,13 +7,16 @@ class Testevents(unittest.TestCase):
 
     @classmethod
     def setUpClass(cls) -> None:
-        cls.event_manager = event.EventManager()
+        cls.old_event_manager = event.EventManager()
         cls.add_n = 5
         for _i in range(1, cls.add_n):
             title, des, t_s, t_e, group, r, color= \
                 f'event_{_i}', f'event_{_i}' , 1702999710, 1703000710, \
                 0, [], '#fff47'
-            cls.event_manager.add_event(title, des, t_s, t_e, group, r, color)
+            cls.old_event_manager.add_event(title, des, t_s, t_e, group, r, color)
+        
+        # Test for building the event pool with the method (__init__)
+        cls.event_manager = event.EventManager(cls.old_event_manager.return_events_in_pickle)
 
     def test_list_events(self):
         self.assertEqual(

@@ -16,7 +16,8 @@ class Testevents(unittest.TestCase):
             cls.old_event_manager.add_event(title, des, t_s, t_e, group, r, color)
         
         # Test for building the event pool with the method (__init__)
-        cls.event_manager = event.EventManager(cls.old_event_manager.return_events_in_pickle)
+        cls.event_manager = event.EventManager(
+            pickle_data=cls.old_event_manager.return_events_in_pickle)
 
     def test_list_events(self):
         self.assertEqual(

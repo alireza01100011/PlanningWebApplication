@@ -18,7 +18,8 @@ class TestGroup(unittest.TestCase):
                 title=title, description=des, color=color)
 
         # Test for building the group pool with the method (__init__)
-        cls.group_manager = group.GroupManager(cls.old_group_manager.return_group_in_pickle)
+        cls.group_manager = group.GroupManager(
+            pickle_data=cls.old_group_manager.return_group_in_pickle)
 
 
 

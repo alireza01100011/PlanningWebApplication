@@ -1,29 +1,24 @@
-from pickle import dumps, loads
-
 from flask import render_template, request, abort, flash, redirect, url_for
 from flask_login import current_user
 from sqlalchemy.exc import IntegrityError
-from ..memory_management.group import GroupManager
 
-from . import group
+from . import group as buleprint_group
 from .forms import GroupForm
+from ..memory_management.group import GroupManager
 
 from app import db
 
 
-@group.route('/')
+@buleprint_group.route('/', methods=['GET'])
 def manage():
-    group_manager = GroupManager()
-    group_manager.set_groups(loads(current_user.groups))
-
-    list_group = group_manager.list_groups
-    del group_manager # Free up the RAM | It can be removed, it doesn't matter...
+    group_manager = GroupManager(
+        pickle_data=current_user.groupss)
 
     return render_template('', title='Groups',
-                            groups=list_group)
+                            groups=group_manager.list_groups)
 
 
-@group.route('/add', methods=['GET', 'POST'])
+@buleprint_group.route('/add', methods=['GET', 'POST'])
 def add():
     form = GroupForm()
     
@@ -32,62 +27,70 @@ def add():
             flash('Invalid forum', category='error')
             return render_template('',
                     title='Create New Group',form=form)
+        # ----
+
+        group_manager = GroupManager(
+            pickle_data=current_user.groupss)
         
-        group_manager = GroupManager()
-        group_manager.set_groups(loads(current_user.groups))
 
         group_manager.add_group(
             title=form.title.data,
             color=form.color.data,
             description=form.description.data)
         
-        current_user.group = group_manager.return_group_in_pickle
-        del group_manager # Free up the RAM | It can be removed, it doesn't matter...
+        # Save data in the database with (pickled) format
+        current_user.groups = group_manager.return_group_in_pickle
+
         try:
             db.session.commit()
+
         except IndentationError:
             db.session.rollback()
             flash('Something went wrong, please try again', category='error')
+        
         else:
             flash('New group successfully created', category='success')
             redirect(url_for('group.manage'))
+    # ----
 
-    return render_template('', title='Create New Group', form=form)
+    return render_template('',
+            title='Create New Group', form=form)
 
 
 
-@group.route('/edit/<int:id>', methods=['GET', 'POST'])
+@buleprint_group.route('/edit/<int:id>', methods=['GET', 'POST'])
 def edit(id:int):
     form = GroupForm()
-    group_manager = GroupManager()
-    group_manager.set_groups(loads(current_user.groups))
+    group_manager = GroupManager(
+        pickle_data=current_user.groupss)
     
-    _group = group_manager.groups.get(int(id))
-    if not  _group :
-        del group_manager, _group # Free up the RAM | It can be removed, it doesn't matter...
+    _selected_group = group_manager.groups.get(int(id))
+
+    # Group Not Found
+    if not  _selected_group :
         return abort(404)
+    # ----
 
     if request.method == 'GET':
-        form.title.data = _group.title
-        form.description.data = _group.description
-        form.color.data = _group.color
-
-        del group_manager # Free up the RAM | It can be removed, it doesn't matter...
-    del _group # Free up the RAM | It can be removed, it doesn't matter...
+        form.title.data = _selected_group.title
+        form.description.data = _selected_group.description
+        form.color.data = _selected_group.color
+    # ----
 
     if request.method == 'POST':
         if not form.validate_on_submit():
             flash('Invalid forum', category='error')
             return render_template('', title='Edit Group', form=form)
-        
+        # ----
+
         group_manager.update_group(
             id=int(id),
             title=form.title.data,
             color=form.color.data,
             description=form.description.data)
 
-        current_user.group = group_manager.return_group_in_pickle
-        del group_manager # Free up the RAM | It can be removed, it doesn't matter...
+        # Save data in the database with (pickled) format
+        current_user.groups = group_manager.return_group_in_pickle
         
         try:
             db.session.commit()
@@ -99,23 +102,26 @@ def edit(id:int):
         else:
             flash('Group edited successfully', category='success')
             redirect(url_for('group.manage'))
-
+    # ----
+    
     return render_template('', title='Edit Group', form=form)
 
 
-@group.route('/remove/<int:id>')
+@buleprint_group.route('/remove/<int:id>', methods=['GET'])
 def remove(id:int):
-    group_manager = GroupManager()
-    group_manager.set_groups(loads(current_user.groups))
-
-    if not  group_manager.groups.get(int(id)) :
-        del group_manager # Free up the RAM | It can be removed, it doesn't matter...
-        return abort(404)
+    group_manager = GroupManager(
+        pickle_data=current_user.groupss)
     
+    # Group Not Found
+    if not group_manager.groups.get(int(id)):
+        return abort(404)
+    # ----
+
     group_manager.delete_group(int(id))
 
-    current_user.group = group_manager.return_group_in_pickle
-    del group_manager # Free up the RAM | It can be removed, it doesn't matter...
+    # Save data in the database with (pickled) format
+    current_user.groups = group_manager.return_group_in_pickle
+
     try:
         db.session.commit()
             
@@ -125,4 +131,5 @@ def remove(id:int):
     
     else:
         flash('Group delete successfully', category='success')
-        redirect(url_for('group.manage'))
+    
+    redirect(url_for('group.manage'))

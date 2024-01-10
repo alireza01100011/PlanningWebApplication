@@ -16,7 +16,7 @@ class GroupManager():
         self.groups:dict[int, _Group] = dict()
         self.last_id = 1
         # Default
-        self.group[0] = _Group(
+        self.groups[0] = _Group(
                 id=0,
                 title='defualt',
                 description='default',

@@ -156,7 +156,37 @@ def edit(id:int):
 
 @blueprint_event.route('/delete/<int:id>', methods=['GET'])
 def remove(id:int):
-    return 'remove'
+    current_user:db_user = current_user
+    
+    event_manager = EventManager(
+        pickle_data=current_user.event.events)
+    
+    _selected_event:_Event|None = \
+        event_manager.events.get(int(id))
+    
+    # EventNot Found 
+    if not _selected_event:
+        return abort(404)
+    # ----
+
+    event_manager.delete_event(int(id))
+    
+    # Seve Data In Pickle
+    current_user.events.events = \
+        event_manager.return_events_in_pickle
+    
+    try:
+        db.session.commit()
+    
+    except IndentationError:
+        db.session.rollback()
+        flash('Something went wrong, please try again', category='error')
+    
+    else:
+        flash('The event was successfully deleted', category='success')
+    
+    return redirect(url_for('event.manage'))
+    
 
 
 

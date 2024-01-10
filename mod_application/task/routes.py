@@ -18,7 +18,13 @@ from app import db
 
 @task.route('/')
 def manage():
-    return 'hello world'
+
+    task_manager = TasksManager()
+    task_manager.set_tasks(pickle.loads(current_user.tasks.tasks))
+    
+    return render_template('',
+                        tasks=task_manager.list_tasks)
+
 
 
 @task.route('/add', methods=['GET', 'POST'])

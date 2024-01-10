@@ -79,8 +79,8 @@ def add():
 
 
 
-@blueprint_event.route('/edit', methods=['GET', 'POST'])
-def edit():
+@blueprint_event.route('/edit/<int:id>', methods=['GET', 'POST'])
+def edit(id:int):
     form = EventForm()
     current_user:db_user = current_user
     
@@ -154,8 +154,8 @@ def edit():
                     title=' Event ', form=form)
 
 
-@blueprint_event.route('/delete', methods=['GET'])
-def remove():
+@blueprint_event.route('/delete/<int:id>', methods=['GET'])
+def remove(id:int):
     return 'remove'
 
 

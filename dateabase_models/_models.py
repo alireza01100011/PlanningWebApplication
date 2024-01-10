@@ -37,8 +37,8 @@ class Task(db.Model):
     tasks = Column(Text, unique=False, nullable=True)
     user_id = Column(Integer, ForeignKey('users.id'), unique=True)
 
-    def __init__(self, tasks:str):
-        self.tasks = tasks
+    def __init__(self, tasks:bytes):
+        self.tasks:bytes = tasks
     
     def __repr__(self):
         return f'{__name__.__class__.__name__}< id:{self.id} - user_id:{self.user_id} >'
@@ -50,8 +50,8 @@ class Event(db.Model):
     events = Column(Text, unique=False, nullable=True)
     user_id = Column(Integer, ForeignKey('users.id'), unique=True)
 
-    def __init__(self, events:str):
-        self.events = events
+    def __init__(self, events:bytes):
+        self.events:bytes = events
 
     def __rapr__(self):
         return f'{__name__.__class__.__name__} < id:{self.id} - user_id{self.user_id} > '

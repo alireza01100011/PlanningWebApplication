@@ -7,16 +7,21 @@ class TestGroup(unittest.TestCase):
     
     @classmethod
     def setUpClass(cls) -> None:
-        cls.group_manager = group.GroupManager()
+        cls.old_group_manager = group.GroupManager()
         cls.number_create_group = 6
         
         for g in range(1, cls.number_create_group):
             title = f'{g}_title'
             des = f'{g}_des'
             color = f'#{g}8475'
-            cls.group_manager.add_group(
+            cls.old_group_manager.add_group(
                 title=title, description=des, color=color)
-    
+
+        # Test for building the group pool with the method (__init__)
+        cls.group_manager = group.GroupManager(cls.old_group_manager.return_group_in_pickle)
+
+
+
     def test_list_groups(self):
         self.assertEqual(
             type(self.group_manager.list_groups), list)

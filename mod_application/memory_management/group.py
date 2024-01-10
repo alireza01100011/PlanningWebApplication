@@ -12,15 +12,20 @@ class _Group(object):
 
 
 class GroupManager():
-    def __init__(self):
+    def __init__(self, pickle_data:bytes=None):
         self.groups:dict[int, _Group] = dict()
         self.last_id = 1
+        
         # Default
         self.groups[0] = _Group(
                 id=0,
                 title='defualt',
                 description='default',
                 color='#ffff')
+        
+        if pickle_data:    
+            self.set_groups(loads(pickle_data))
+
 
     #  End Function
         

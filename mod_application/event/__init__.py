@@ -1,1 +1,5 @@
-ECHO is on.
+from flask import Blueprint
+
+event = Blueprint('event', __name__, url_prefix='/event/')
+
+from .routes import *

@@ -12,7 +12,12 @@ from app import db
 
 @blueprint_event.route('/', methods=['GET'])
 def manage():
-    return 'manage'
+    manager_event = EventManager(
+        pickle_data=current_user.event.events)
+    
+    return render_template('', title='Events',
+                        events=manager_event.list_events)
+
 
 @blueprint_event.route('/add', methods=['GET', 'POST'])
 def add():

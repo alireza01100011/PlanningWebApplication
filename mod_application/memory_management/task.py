@@ -10,7 +10,11 @@ Manages tasks (Tasks)
 """
 from pickle import loads, dumps
 
-from group import _Group
+try:
+    from .group import _Group
+except ImportError:
+    from group import _Group
+
 class _Task:
     __slots__ = ["id", "name", "time_start", "done", "group_id"]
     def __init__(self, id:int, group_id:int|None,

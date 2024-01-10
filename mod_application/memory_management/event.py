@@ -10,7 +10,12 @@ Events manager
 
 from pickle import loads, dumps
 
-from group import _Group
+try:
+    from .group import _Group
+except ImportError:
+    from group import _Group
+
+
 class _Event():
     __slots__ = ['id', 'title', 'description', 'start_time',
                  'end_time', 'color', 'group_id', 'reminders']

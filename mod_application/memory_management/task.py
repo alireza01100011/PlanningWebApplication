@@ -27,9 +27,13 @@ class _Task:
 
 
 class TasksManager:
-    def __init__(self):
+    def __init__(self, pickle_data:bytes=None):
         self.tasks:dict[int, _Task] = dict()
         self.last_id = 0
+
+        if pickle_data:
+            self.set_tasks(loads(pickle_data))
+
     #  End Function
     
     @property

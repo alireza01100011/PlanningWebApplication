@@ -7,11 +7,15 @@ class TestTasks(unittest.TestCase):
 
     @classmethod
     def setUpClass(cls) -> None:
-        cls.tasks = task.TasksManager()
+        cls.old_tasks = task.TasksManager()
         cls.add_n = 5
         for _i in range(1, cls.add_n):
             name, t_s= f'task_{_i}', 1702999710
-            cls.tasks.add_task(name, t_s)
+            cls.old_tasks.add_task(name, t_s)
+        
+        # Test for building the task pool with the method (__init__)
+        cls.tasks = task.TasksManager(
+            pickle_data=cls.old_tasks.return_tasks_in_pickle)
 
     def test_list_tasks(self):
         self.assertEqual(

@@ -1,38 +1,38 @@
-import pickle
-
 from flask import render_template, abort, request, flash, redirect, url_for
 from flask_login import current_user
 from sqlalchemy.exc import IntegrityError
 
-from utlis.flask_login import login_required
-from ..memory_management.task import TasksManager
-from ..memory_management.group import GroupManager
-from .models import Task
+from . import task as buleprint_task
+from .models import Task as db_task
 from .forms import TaskForm
-from . import task
 
-
-from dateabase_models._models import User, Task, Event
+from ..memory_management.task import TasksManager, _Task
+from ..memory_management.group import GroupManager, _Group
+from ...mod_user.user.models import User as db_user
 
 from app import db
 
-@task.route('/')
+@buleprint_task.route('/')
 def manage():
+    current_user:db_user = current_user
 
-    task_manager = TasksManager()
-    task_manager.set_tasks(pickle.loads(current_user.tasks.tasks))
+    task_manager = TasksManager(
+        pickle_data=current_user.tasks[0].tasks)
+    
     
     return render_template('',
                         tasks=task_manager.list_tasks)
 
 
 
-@task.route('/add', methods=['GET', 'POST'])
+@buleprint_task.route('/add', methods=['GET', 'POST'])
 def add():
     form = TaskForm()
-    user = current_user
-    group_manager = GroupManager()
-    group_manager.set_groups(pickle.loads(user.groups))
+    current_user:db_user = current_user
+    
+    group_manager = GroupManager(
+        pickle_data=current_user.groups)
+    
     
     if request.method == 'GET':
         form.group.choices = [
@@ -45,11 +45,10 @@ def add():
             return render_template('', 
                                     title='Task', form=form)
         
-        user_tasks = user.tasks
-        user_tasks:Task = user_tasks[0]
 
-        task_manager = TasksManager()
-        task_manager.set_tasks(pickle.loads(user_tasks.tasks))
+        task_manager = TasksManager(
+            pickle_data=current_user.tasks[0].tasks)
+        
 
         # Does this group exist? If not, select the default group
         _group = 0 # Defualt ID
@@ -61,7 +60,7 @@ def add():
             time_start=form.start.data,
             group_id=_group)
         
-        user_tasks.tasks = task_manager.return_tasks_in_pickle
+        current_user.tasks[0].tasks = task_manager.return_tasks_in_pickle
 
         try:
             db.session.commit()
@@ -78,23 +77,24 @@ def add():
                         title='Task', form=form)
 
 
-@task.route('/edit/<int:id>', methods=['GET', 'POST'])
+@buleprint_task.route('/edit/<int:id>', methods=['GET', 'POST'])
 def edit(id:int):
     form = TaskForm()
+    current_user:db_user = current_user
+
+    task_manager = TasksManager(
+        pickle_data=current_user.tasks[0].tasks)
     
-    user:User = current_user
-    user_tasks:Task = user.tasks
+    _selected_task = task_manager.tasks.get(int(id))
 
-    task_manager = TasksManager()
-    task_manager.set_tasks(pickle.loads(user_tasks.tasks))
-    _task_selected = task_manager.tasks.get(int(id))
-
-    group_manager = GroupManager()
-    group_manager.set_groups(pickle.loads(user.groups))
-
+    # Task Not Found
     if not _task_selected:
         return abort(404)
+    # ----
 
+    group_manager = GroupManager(
+        pickle_data=current_user.groups)
+    
     if request.method == 'GET':
         form.group.choices = [
             (group.id, group.title)
@@ -123,7 +123,7 @@ def edit(id:int):
             time_start= form.start.data,
             group_id = _group)
         
-        user_tasks.tasks = task_manager.return_tasks_in_pickle
+        current_user.tasks[0].tasks = task_manager.return_tasks_in_pickle
 
         try:
             db.session.commit()
@@ -139,21 +139,24 @@ def edit(id:int):
     return render_template('', 
                         title='Edit Task', form=form)
 
-@task.route('remove/<int:id>')
+
+@buleprint_task.route('remove/<int:id>')
 def remove(id:int):
-    user:User = current_user
-    user_tasks:Task = user.tasks
+    current_user:db_user = current_user
 
-    task_manager = TasksManager()
-    task_manager.set_tasks(pickle.loads(user_tasks.tasks))
-    _task_selected = task_manager.tasks.get(int(id))
+    task_manager = TasksManager(
+        pickle_data=current_user.tasks[0].tasks)
+    
+    _selected_task = task_manager.tasks.get(int(id))
 
+    # Task Not Found
     if not _task_selected:
         return abort(404)
-    
+    # ----
+
     task_manager.delete_task(int(id))
 
-    user_tasks.tasks = task_manager.return_tasks_in_pickle
+    current_user.tasks[0].tasks = task_manager.return_tasks_in_pickle
 
     try:
         db.session.commit()

@@ -132,3 +132,30 @@ def edit(id:int):
             
     return render_template('', 
                         title='Edit Task', form=form)
+
+@task.route('remove/<int:id>')
+def remove(id:int):
+    user:User = current_user
+    user_tasks:Task = user.tasks
+
+    task_manager = TasksManager()
+    task_manager.set_tasks(pickle.loads(user_tasks.tasks))
+    _task_selected = task_manager.tasks.get(int(id))
+
+    if not _task_selected:
+        return abort(404)
+    
+    task_manager.delete_task(int(id))
+
+    user_tasks.tasks = task_manager.return_tasks_in_pickle
+
+    try:
+        db.session.commit()
+            
+    except IndentationError:
+        db.session.rollback()
+        flash('Something went wrong, please try again', category='error')
+    
+    else:
+        flash('Task delete successfully', category='success')
+        redirect(url_for('task.manage'))

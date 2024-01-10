@@ -17,7 +17,7 @@ def manage():
     group_manager.set_groups(loads(current_user.groups))
 
     list_group = group_manager.list_groups
-    del group_manager # Free up the RAM
+    del group_manager # Free up the RAM | It can be removed, it doesn't matter...
 
     return render_template('', title='Groups',
                             groups=list_group)
@@ -42,7 +42,7 @@ def add():
             description=form.description.data)
         
         current_user.group = group_manager.return_group_in_pickle
-        del group_manager # Free up the RAM
+        del group_manager # Free up the RAM | It can be removed, it doesn't matter...
         try:
             db.session.commit()
         except IndentationError:
@@ -64,7 +64,7 @@ def edit(id:int):
     
     _group = group_manager.groups.get(int(id))
     if not  _group :
-        del group_manager, _group # Free up the RAM
+        del group_manager, _group # Free up the RAM | It can be removed, it doesn't matter...
         return abort(404)
 
     if request.method == 'GET':
@@ -72,8 +72,8 @@ def edit(id:int):
         form.description.data = _group.description
         form.color.data = _group.color
 
-        del group_manager # Free up the RAM
-    del _group # Free up the RAM
+        del group_manager # Free up the RAM | It can be removed, it doesn't matter...
+    del _group # Free up the RAM | It can be removed, it doesn't matter...
 
     if request.method == 'POST':
         if not form.validate_on_submit():
@@ -87,7 +87,7 @@ def edit(id:int):
             description=form.description.data)
 
         current_user.group = group_manager.return_group_in_pickle
-        del group_manager # Free up the RAM
+        del group_manager # Free up the RAM | It can be removed, it doesn't matter...
         
         try:
             db.session.commit()
@@ -109,13 +109,13 @@ def remove(id:int):
     group_manager.set_groups(loads(current_user.groups))
 
     if not  group_manager.groups.get(int(id)) :
-        del group_manager # Free up the RAM
+        del group_manager # Free up the RAM | It can be removed, it doesn't matter...
         return abort(404)
     
     group_manager.delete_group(int(id))
 
     current_user.group = group_manager.return_group_in_pickle
-    del group_manager # Free up the RAM
+    del group_manager # Free up the RAM | It can be removed, it doesn't matter...
     try:
         db.session.commit()
             

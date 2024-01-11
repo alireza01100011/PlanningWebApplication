@@ -12709,7 +12709,7 @@ Padding margin property
   html[dir="rtl"] .lobilists .lobilist-actions {
     right: auto;
     left: 8px; }
-  html[dir="rtl"] .lobilists .lobilist-item .todo-actions {
+  html[dir="rtl"] .lobilists .lobilist-item .task-actions {
     right: auto;
     left: 4px; }
   html[dir="rtl"] .lobilists .lobilist-check {
@@ -14584,34 +14584,34 @@ File: scss
     .feed-widget .feed-body .feed-item > .feed-icon i {
       line-height: 40px; }
 
-.todo-widget .todo-list .todo-item {
+.task-widget .task-list .task-item {
   border: 0px;
   margin-bottom: 0px;
   padding: 20px 15px 15px 0px; }
-  .todo-widget .todo-list .todo-item .custom-checkbox {
+  .task-widget .task-list .task-item .custom-checkbox {
     width: 100%; }
-    .todo-widget .todo-list .todo-item .custom-checkbox .todo-label {
+    .task-widget .task-list .task-item .custom-checkbox .task-label {
       font-weight: 400;
       width: 100%; }
-  .todo-widget .todo-list .todo-item .assignedto {
+  .task-widget .task-list .task-item .assignedto {
     padding: 0 0 0 25px;
     margin: 0px; }
-    .todo-widget .todo-list .todo-item .assignedto .assignee {
+    .task-widget .task-list .task-item .assignedto .assignee {
       padding: 0px;
       display: inline-block;
       border: 0px;
       margin-right: 2px; }
-      .todo-widget .todo-list .todo-item .assignedto .assignee .assignee-img {
+      .task-widget .task-list .task-item .assignedto .assignee .assignee-img {
         width: 30px;
         border-radius: 100%; }
-  .todo-widget .todo-list .todo-item .item-date {
+  .task-widget .task-list .task-item .item-date {
     padding-left: 25px;
     font-size: 12px;
     margin-top: 5px;
     display: inline-block;
     color: #a1aab2; }
 
-.list-task .task-done .todo-desc,
+.list-task .task-done .task-desc,
 .list-task .task-done .badge {
   text-decoration: line-through; }
 

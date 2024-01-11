@@ -1,3 +1,4 @@
+import sys
 from flask import render_template, abort, request, flash, redirect, url_for
 from flask_login import current_user
 from sqlalchemy.exc import IntegrityError
@@ -8,7 +9,9 @@ from .forms import TaskForm
 
 from ..memory_management.task import TasksManager, _Task
 from ..memory_management.group import GroupManager, _Group
-from ...mod_user.user.models import User as db_user
+
+sys.path.append("../..")
+from mod_user.user.models import User as db_user
 
 from app import db
 

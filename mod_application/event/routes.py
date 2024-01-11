@@ -1,3 +1,4 @@
+import sys
 from flask import render_template, request, abort, flash, redirect, url_for
 from flask_login import current_user
 from sqlalchemy.exc import IntegrityError
@@ -7,7 +8,9 @@ from .forms import EventForm
 from .models import Event as db_event
 from ..memory_management.event import EventManager, _Event
 from ..memory_management.group import GroupManager
-from ...mod_user.user.models import User as db_user
+
+sys.path.append("../..")
+from mod_user.user.models import User as db_user
 
 from app import db
 

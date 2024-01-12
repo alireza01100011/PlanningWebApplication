@@ -57,7 +57,8 @@
         <h4 class="mb-2">Welcome to Py Calander! 👋</h4>
         <p class="mb-4">Please sign-in to your account and start the adventure</p>
 
-        <form id="formAuthentication" class="mb-3" action="index.html">
+        <form id="formAuthentication" class="mb-3"
+          action="{{ request.full_path }}" method="POST">
           {{ form.hidden_tag() }}
 
           {% for field in form if not field.widget.input_type == 'hidden' %}

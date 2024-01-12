@@ -30,12 +30,12 @@ def login():
     form = LoginForm()
     if request.method == 'POST':
         if not form.validate_on_submit():
-            return render_template('user/login.html', title='Login', form=form)
+            return render_template('user/forms-A.html', title='Login', form=form)
 
         user = User.query.filter(User.email.ilike(f'{form.email.data}')).first()
         if not user:
             flash("Something went wrong. Please try again")
-            return render_template('user/login.html', title='Login', form=form)
+            return render_template('user/forms-A.html', title='Login', form=form)
         
         login_user(user, remember=form.remember.data)
         flash('You have successfully logged in' , 'info')
@@ -43,7 +43,7 @@ def login():
                                   default=url_for('user.profile'))
         return redirect(__next)
 
-    return render_template('user/login.html', title='Login',
+    return render_template('user/forms-A.html', title='Login',
                            form=form)
 
 
@@ -53,7 +53,7 @@ def register():
     form = RegisterForm()
     if request.method == 'POST':
         if not form.validate_on_submit():
-            return render_template('user/login.html', title='Register', form=form)
+            return render_template('user/forms-A.html', title='Register', form=form)
         
         # Remaining: Email confirmation must be added
         
@@ -83,13 +83,13 @@ def register():
         except IntegrityError:
             db.session.rollback()
             flash('Error! Try again (probably because the email you entered already exists)')
-            return render_template('user/register.html', title='Register', form=form)
+            return render_template('user/forms-A.html', title='Register', form=form)
 
         else:
             flash('Your account has been created successfully')
             return redirect(url_for('user.login'))
 
-    return render_template('user/register.html', title='Register',
+    return render_template('user/forms-A.html', title='Register',
                            form=form)
 
 

@@ -21,7 +21,10 @@ from dateabase_models._models import Event, Task
 @login_required(_next_url='/profile/')
 def profile():
 
-    return render_template('user/profile.html')
+    return render_template('user/profile.html',
+    title='Profile', 
+    task_total='1258', task_done_total='180',
+    event_total='180', event_done_total='175')
 
 
 @user.route('login/', methods=['GET', 'POST'])

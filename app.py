@@ -28,3 +28,20 @@ app.register_blueprint(group)
 app.register_blueprint(task)
 app.register_blueprint(event)
 
+
+
+
+
+
+
+
+
+
+@app.route('/')
+def index():
+    ''' For Dev [Test Tepmlate] '''
+    from flask import render_template
+    return render_template('application/home.html', title='Home')
+
+
+

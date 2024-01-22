@@ -17,14 +17,14 @@ from app import db
 
 @buleprint_task.route('/')
 def manage():
-    current_user:db_user = current_user
+    # current_user:db_user = current_user
 
-    task_manager = TasksManager(
-        pickle_data=current_user.tasks[0].tasks)
+    # task_manager = TasksManager(
+    #     pickle_data=current_user.tasks[0].tasks)
     
     
-    return render_template('',
-                        tasks=task_manager.list_tasks)
+    return render_template('application/to-do.html', title='To Do'
+                        ) # tasks=task_manager.list_tasks
 
 
 

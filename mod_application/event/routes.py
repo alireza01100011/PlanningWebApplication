@@ -17,11 +17,11 @@ from app import db
 
 @blueprint_event.route('/', methods=['GET'])
 def manage():
-    manager_event = EventManager(
-        pickle_data=current_user.event.events)
+    # manager_event = EventManager(
+    #     pickle_data=current_user.event.events)
     
-    return render_template('', title='Events',
-                        events=manager_event.list_events)
+    return render_template('application/calendar.html'
+    , title='Events')
 
 
 @blueprint_event.route('/add', methods=['GET', 'POST'])

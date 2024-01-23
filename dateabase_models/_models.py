@@ -28,7 +28,7 @@ class User(db.Model, UserMixin):
         self.roll = roll
 
     def __repr__(self):
-        return f'{__name__.__class__.__name__}< id:{self.id} - email:{self.email} - roll:{self.roll}>'
+        return f'{self.__class__.__name__}< id:{self.id} - email:{self.email} - roll:{self.roll}>'
     
 
 class Task(db.Model):
@@ -41,7 +41,7 @@ class Task(db.Model):
         self.tasks:bytes = tasks
     
     def __repr__(self):
-        return f'{__name__.__class__.__name__}< id:{self.id} - user_id:{self.user_id} >'
+        return f'{self.__class__.__name__}< id:{self.id} - user_id:{self.user_id} >'
     
 
 class Event(db.Model):
@@ -54,6 +54,6 @@ class Event(db.Model):
         self.events:bytes = events
 
     def __rapr__(self):
-        return f'{__name__.__class__.__name__} < id:{self.id} - user_id{self.user_id} > '
+        return f'{self.__class__.__name__} < id:{self.id} - user_id{self.user_id} > '
 
 

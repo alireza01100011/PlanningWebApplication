@@ -27,7 +27,7 @@ document.addEventListener("DOMContentLoaded", function () {
     const eventEndDateInput = document.querySelector("#eventEndDate");
     const eventURLInput = document.querySelector("#eventURL");
     const eventLabelSelect = $("#eventLabel");
-    const eventGuestsSelect = $("#eventGuests");
+    const eventReminderSelect = $("#eventReminder");
     const eventLocationInput = document.querySelector("#eventLocation");
     const eventDescriptionInput = document.querySelector("#eventDescription");
     const allDaySwitch = document.querySelector(".allDay-switch");
@@ -81,10 +81,10 @@ document.addEventListener("DOMContentLoaded", function () {
         });
     }
 
-    if (eventGuestsSelect.length) {
-        eventGuestsSelect.wrap('<div class="position-relative"></div>').select2({
+    if (eventReminderSelect.length) {
+        eventReminderSelect.wrap('<div class="position-relative"></div>').select2({
             placeholder: "Select value",
-            dropdownParent: eventGuestsSelect.parent(),
+            dropdownParent: eventReminderSelect.parent(),
             closeOnSelect: false,
             templateResult: formatGuestOption,
             templateSelection: formatGuestOption,
@@ -209,7 +209,7 @@ document.addEventListener("DOMContentLoaded", function () {
                 eventLocationInput.value = event.extendedProps.location;
             }
             if (event.extendedProps.guests !== undefined) {
-                eventGuestsSelect.val(event.extendedProps.guests).trigger("change");
+                eventReminderSelect.val(event.extendedProps.guests).trigger("change");
             }
             if (event.extendedProps.description !== undefined) {
                 eventDescriptionInput.value = event.extendedProps.description;
@@ -230,7 +230,7 @@ document.addEventListener("DOMContentLoaded", function () {
         eventTitleInput.value = "";
         eventLocationInput.value = "";
         allDaySwitch.checked = false;
-        eventGuestsSelect.val("").trigger("change");
+        eventReminderSelect.val("").trigger("change");
         eventDescriptionInput.value = "";
     }
 
@@ -291,7 +291,23 @@ document.addEventListener("DOMContentLoaded", function () {
     submitButton.addEventListener("click", function (e) {
         if (submitButton.classList.contains("btn-add-event")) {
             if (isFormValid) {
-                // Request Add Event
+                // Send Event To Sever
+                const form_url = eventForm.getAttribute('action')
+                const form_data = {
+                    title: eventTitleInput.value,
+                    start: eventStartDateInput.value,
+                    end: eventEndDateInput.value,
+                    startStr: eventStartDateInput.value,
+                    endStr: eventEndDateInput.value,
+                    description: eventDescriptionInput.value
+                };
+
+                var xhr = new XMLHttpRequest();
+                xhr.open("POST", form_url, true);
+                xhr.setRequestHeader('Content-Type', 'application/json');
+                xhr.send(JSON.stringify(form_data));
+                // - Send Event To Sever
+
                 const newEvent = {
                     id: calendar.getEvents().length + 1,
                     title: eventTitleInput.value,
@@ -302,7 +318,6 @@ document.addEventListener("DOMContentLoaded", function () {
                     display: "block",
                     extendedProps: {
                         location: eventLocationInput.value,
-                        guests: eventGuestsSelect.val(),
                         calendar: eventLabelSelect.val(),
                         description: eventDescriptionInput.value
                     }
@@ -327,7 +342,7 @@ document.addEventListener("DOMContentLoaded", function () {
                     url: eventURLInput.value,
                     extendedProps: {
                         location: eventLocationInput.value,
-                        guests: eventGuestsSelect.val(),
+                        guests: eventReminderSelect.val(),
                         calendar: eventLabelSelect.val(),
                         description: eventDescriptionInput.value
                     },

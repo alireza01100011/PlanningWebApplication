@@ -2,31 +2,31 @@
 
 
 {% block page_js %}
-  <!-- Vendors JS -->
-  <script src="/static/assets/vendor/libs/fullcalendar/fullcalendar.js"></script>
-  <script src="/static/assets/vendor/libs/formvalidation/dist/js/FormValidation.min.js"></script>
-  <script src="/static/assets/vendor/libs/formvalidation/dist/js/plugins/Bootstrap5.min.js"></script>
-  <script src="/static/assets/vendor/libs/formvalidation/dist/js/plugins/AutoFocus.min.js"></script>
-  <script src="/static/assets/vendor/libs/select2/select2.js"></script>
-  <script src="/static/assets/vendor/libs/flatpickr/flatpickr.js"></script>
-  <script src="/static/assets/vendor/libs/moment/moment.js"></script>
-  <!-- Page JS -->
-  <script src="/static/assets/js/app-calendar-events.js"></script>
-  <script src="/static/assets/js/app-calendar.js"></script>
+<!-- Vendors JS -->
+<script src="/static/assets/vendor/libs/fullcalendar/fullcalendar.js"></script>
+<script src="/static/assets/vendor/libs/formvalidation/dist/js/FormValidation.min.js"></script>
+<script src="/static/assets/vendor/libs/formvalidation/dist/js/plugins/Bootstrap5.min.js"></script>
+<script src="/static/assets/vendor/libs/formvalidation/dist/js/plugins/AutoFocus.min.js"></script>
+<script src="/static/assets/vendor/libs/select2/select2.js"></script>
+<script src="/static/assets/vendor/libs/flatpickr/flatpickr.js"></script>
+<script src="/static/assets/vendor/libs/moment/moment.js"></script>
+<!-- Page JS -->
+<script src="/static/assets/js/app-calendar-events.js"></script>
+<script src="/static/assets/js/app-calendar.js"></script>
 {% endblock page_js %}
 
 
 {% block page_css %}
-  <!-- Vendors CSS -->
-  <link rel="stylesheet" href="/static/assets/vendor/libs/perfect-scrollbar/perfect-scrollbar.css" />
-  <link rel="stylesheet" href="/static/assets/vendor/libs/typeahead-js/typeahead.css" />
-  <link rel="stylesheet" href="/static/assets/vendor/libs/fullcalendar/fullcalendar.css" />
-  <link rel="stylesheet" href="/static/assets/vendor/libs/flatpickr/flatpickr.css" />
-  <link rel="stylesheet" href="/static/assets/vendor/libs/select2/select2.css" />
-  <link rel="stylesheet" href="/static/assets/vendor/libs/quill/editor.css" />
-  <link rel="stylesheet" href="/static/assets/vendor/libs/formvalidation/dist/css/formValidation.min.css" />
-  <!-- Page CSS -->    
-  <link rel="stylesheet" href="/static/assets/vendor/css/pages/app-calendar.css" />
+<!-- Vendors CSS -->
+<link rel="stylesheet" href="/static/assets/vendor/libs/perfect-scrollbar/perfect-scrollbar.css" />
+<link rel="stylesheet" href="/static/assets/vendor/libs/typeahead-js/typeahead.css" />
+<link rel="stylesheet" href="/static/assets/vendor/libs/fullcalendar/fullcalendar.css" />
+<link rel="stylesheet" href="/static/assets/vendor/libs/flatpickr/flatpickr.css" />
+<link rel="stylesheet" href="/static/assets/vendor/libs/select2/select2.css" />
+<link rel="stylesheet" href="/static/assets/vendor/libs/quill/editor.css" />
+<link rel="stylesheet" href="/static/assets/vendor/libs/formvalidation/dist/css/formValidation.min.css" />
+<!-- Page CSS -->
+<link rel="stylesheet" href="/static/assets/vendor/css/pages/app-calendar.css" />
 {% endblock page_css %}
 
 
@@ -58,35 +58,32 @@
         </div>
 
         <div class="form-check mb-2">
-          <input class="form-check-input select-all" type="checkbox" id="selectAll" data-value="all"
-            checked>
+          <input class="form-check-input select-all" type="checkbox" id="selectAll" data-value="all" checked>
           <label class="form-check-label" for="selectAll">View All</label>
         </div>
 
         <div class="app-calendar-events-filter">
           <div class="form-check form-check-danger mb-2">
-            <input class="form-check-input input-filter" type="checkbox" id="select-personal"
-              data-value="personal" checked>
+            <input class="form-check-input input-filter" type="checkbox" id="select-personal" data-value="personal"
+              checked>
             <label class="form-check-label" for="select-personal">Personal</label>
           </div>
           <div class="form-check mb-2">
-            <input class="form-check-input input-filter" type="checkbox" id="select-business"
-              data-value="business" checked>
+            <input class="form-check-input input-filter" type="checkbox" id="select-business" data-value="business"
+              checked>
             <label class="form-check-label" for="select-business">Business</label>
           </div>
           <div class="form-check form-check-warning mb-2">
-            <input class="form-check-input input-filter" type="checkbox" id="select-family"
-              data-value="family" checked>
+            <input class="form-check-input input-filter" type="checkbox" id="select-family" data-value="family" checked>
             <label class="form-check-label" for="select-family">Family</label>
           </div>
           <div class="form-check form-check-success mb-2">
-            <input class="form-check-input input-filter" type="checkbox" id="select-holiday"
-              data-value="holiday" checked>
+            <input class="form-check-input input-filter" type="checkbox" id="select-holiday" data-value="holiday"
+              checked>
             <label class="form-check-label" for="select-holiday">Holiday</label>
           </div>
           <div class="form-check form-check-info">
-            <input class="form-check-input input-filter" type="checkbox" id="select-etc" data-value="etc"
-              checked>
+            <input class="form-check-input input-filter" type="checkbox" id="select-etc" data-value="etc" checked>
             <label class="form-check-label" for="select-etc">ETC</label>
           </div>
         </div>
@@ -108,15 +105,14 @@
         aria-labelledby="addEventSidebarLabel">
         <div class="offcanvas-header border-bottom">
           <h5 class="offcanvas-title mb-2" id="addEventSidebarLabel">Add Event</h5>
-          <button type="button" class="btn-close text-reset" data-bs-dismiss="offcanvas"
-            aria-label="Close"></button>
+          <button type="button" class="btn-close text-reset" data-bs-dismiss="offcanvas" aria-label="Close"></button>
         </div>
         <div class="offcanvas-body">
-          <form class="event-form pt-0" id="eventForm" onsubmit="return false">
+          <form action="http://localhost:5000/test-form" class="event-form pt-0" id="eventForm" onsubmit="return false">
+            {{ form.hidden_tag() }}
             <div class="mb-3">
               <label class="form-label" for="eventTitle">Title</label>
-              <input type="text" class="form-control" id="eventTitle" name="eventTitle"
-                placeholder="Event Title" />
+              <input type="text" class="form-control" id="eventTitle" name="eventTitle" placeholder="Event Title" />
             </div>
             <div class="mb-3">
               <label class="form-label" for="eventLabel">Label</label>
@@ -135,8 +131,7 @@
             </div>
             <div class="mb-3">
               <label class="form-label" for="eventEndDate">End Date</label>
-              <input type="text" class="form-control" id="eventEndDate" name="eventEndDate"
-                placeholder="End Date" />
+              <input type="text" class="form-control" id="eventEndDate" name="eventEndDate" placeholder="End Date" />
             </div>
             <div class="mb-3">
               <label class="switch">
@@ -154,15 +149,15 @@
                 placeholder="https://www.google.com" />
             </div>
             <div class="mb-3 select2-primary">
-              <label class="form-label" for="eventGuests">Add Guests</label>
-              <select class="select2 select-event-guests form-select" id="eventGuests" name="eventGuests"
-                multiple>
-                <option data-avatar="1.png" value="Jane Foster">Jane Foster</option>
-                <option data-avatar="3.png" value="Donna Frank">Donna Frank</option>
-                <option data-avatar="5.png" value="Gabrielle Robertson">Gabrielle Robertson</option>
-                <option data-avatar="7.png" value="Lori Spears">Lori Spears</option>
-                <option data-avatar="9.png" value="Sandy Vega">Sandy Vega</option>
-                <option data-avatar="11.png" value="Cheryl May">Cheryl May</option>
+              <label class="form-label" for="eventReminder">Reminder</label>
+              <select class="select2 select-event-guests form-select" 
+                id="eventReminder" name="eventReminder" multiple>
+                <option value="Minutes 5">Minutes 5</option>
+                <option value="Minutes 10">Minutes 10</option>
+                <option value="Minutes 15">Minutes 15</option>
+                <option value="Minutes 30">Minutes 30</option>
+                <option value="Minutes 60">Minutes 60</option>
+                <option value="Hour 2">Hour 2</option>
               </select>
             </div>
             <div class="mb-3">
@@ -183,6 +178,7 @@
               <div><button class="btn btn-label-danger btn-delete-event d-none">Delete</button></div>
             </div>
           </form>
+
         </div>
       </div>
     </div>

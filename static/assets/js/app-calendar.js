@@ -299,9 +299,13 @@ document.addEventListener("DOMContentLoaded", function () {
                     end: eventEndDateInput.value,
                     startStr: eventStartDateInput.value,
                     endStr: eventEndDateInput.value,
+                    reminder : eventReminderSelect.val(),
+                    url : eventURLInput.value,
+                    location: eventLocationInput.value,
                     description: eventDescriptionInput.value
+                    
                 };
-
+                console.log(form_data)
                 var xhr = new XMLHttpRequest();
                 xhr.open("POST", form_url, true);
                 xhr.setRequestHeader('Content-Type', 'application/json');

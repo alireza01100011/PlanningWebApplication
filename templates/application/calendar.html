@@ -108,7 +108,7 @@
           <button type="button" class="btn-close text-reset" data-bs-dismiss="offcanvas" aria-label="Close"></button>
         </div>
         <div class="offcanvas-body">
-          <form action="http://localhost:5000/test-form" class="event-form pt-0" id="eventForm" onsubmit="return false">
+          <form action="{{ url_for('event.manage') }}" class="event-form pt-0" id="eventForm" onsubmit="return false">
             {{ form.hidden_tag() }}
             <div class="mb-3">
               <label class="form-label" for="eventTitle">Title</label>
@@ -135,7 +135,7 @@
             </div>
             <div class="mb-3">
               <label class="switch">
-                <input type="checkbox" class="switch-input allDay-switch" />
+                <input type="checkbox" class="switch-input allDay-switch" disabled/>
                 <span class="switch-toggle-slider">
                   <span class="switch-on"></span>
                   <span class="switch-off"></span>
@@ -152,12 +152,18 @@
               <label class="form-label" for="eventReminder">Reminder</label>
               <select class="select2 select-event-guests form-select" 
                 id="eventReminder" name="eventReminder" multiple>
-                <option value="Minutes 5">Minutes 5</option>
-                <option value="Minutes 10">Minutes 10</option>
-                <option value="Minutes 15">Minutes 15</option>
-                <option value="Minutes 30">Minutes 30</option>
-                <option value="Minutes 60">Minutes 60</option>
-                <option value="Hour 2">Hour 2</option>
+                <option value="5">Minutes 5</option>
+                <option value="10">Minutes 10</option>
+                <option value="15">Minutes 15</option>
+                <option value="30">Minutes 30</option>
+                <option value="45">Minutes 45</option>
+                <option value="60">Hour 1</option>
+                <option value="90">Hour 1.5</option>
+                <option value="120">Hour 2</option>
+                <option value="180">Hour 3</option>
+                <option value="240">Hour 4</option>
+                <option value="300">Hour 5</option>
+
               </select>
             </div>
             <div class="mb-3">

@@ -299,10 +299,11 @@ document.addEventListener("DOMContentLoaded", function () {
                     end: eventEndDateInput.value,
                     startStr: eventStartDateInput.value,
                     endStr: eventEndDateInput.value,
-                    reminder : eventReminderSelect.val(),
-                    url : eventURLInput.value,
+                    reminder: eventReminderSelect.val() || [],
+                    url: eventURLInput.value,
                     location: eventLocationInput.value,
-                    description: eventDescriptionInput.value
+                    description: eventDescriptionInput.value,
+                    lable: eventLabelSelect.val()
                     
                 };
                 console.log(form_data)

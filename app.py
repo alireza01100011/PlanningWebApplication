@@ -34,7 +34,7 @@ app.register_blueprint(event)
 
 
 
-
+from flask import request
 
 
 @app.route('/')
@@ -43,5 +43,13 @@ def index():
     from flask import render_template
     return render_template('application/home.html', title='Home')
 
+from json import dumps
+@app.route('/test-form', methods=['POST'])
+def test_form():
+    if request.method == 'POST':
+        form = request.get_json()
+        print(form)
+        return 'post'
+    return 'get'
 
 

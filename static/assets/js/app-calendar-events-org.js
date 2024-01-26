@@ -4,8 +4,7 @@ let date = new Date,
     nextDay = new Date((new Date).getTime() + 864e5),
     nextMonth = 11 === date.getMonth() ? new Date(date.getFullYear() + 1, 0, 1) : new Date(date.getFullYear(), date.getMonth() + 1, 1),
     prevMonth = 11 === date.getMonth() ? new Date(date.getFullYear() - 1, 0, 1) : new Date(date.getFullYear(), date.getMonth() - 1, 1),
-    events = [
-    {
+    events = [{
         id: 1,
         url: "",
         title: "Design Review",
@@ -15,9 +14,7 @@ let date = new Date,
         extendedProps: {
             calendar: "Business"
         }
-    },
-    
-    {
+    }, {
         id: 2,
         url: "",
         title: "Meeting With Client",
@@ -40,7 +37,7 @@ let date = new Date,
     }, {
         id: 4,
         url: "",
-        title: "Docsdfsdf tor's Appointment",
+        title: "Doctor's Appointment",
         start: new Date(date.getFullYear(), date.getMonth() + 1, -11),
         end: new Date(date.getFullYear(), date.getMonth() + 1, -10),
         extendedProps: {
@@ -105,18 +102,4 @@ let date = new Date,
         extendedProps: {
             calendar: "Personal"
         }
-    },
-
-    {
-        id: 11,
-        url: "",
-        title: "asdfsdfsdfasdfsdfw",
-        start:  new Date(2024, 1 + 26),
-        end: new Date(2024, 1 + 26),
-        allDay: !1,
-        extendedProps: {
-            calendar: "Business"
-        }
-    },
-
-];
+    }];

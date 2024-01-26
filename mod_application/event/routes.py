@@ -64,12 +64,12 @@ def add():
         
         _group_id = 0 # Default Group ID
         
-        try: int(form_data['lable'])
-        except KeyError or ValueError: pass
-        else: _id = int(form_data['lable'])
+        # try: int(form_data['lable'])
+        # except KeyError or ValueError: pass
+        # else: _id = int(form_data['lable'])
         
-        if group_manager.groups.get(_id):
-            _group_id = _id
+        # if group_manager.groups.get(_id):
+        #     _group_id = _id
         
         # Add New Event
         event_manager.add_event(

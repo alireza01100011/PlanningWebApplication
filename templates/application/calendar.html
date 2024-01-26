@@ -69,9 +69,9 @@
             <label class="form-check-label" for="select-personal">Personal</label>
           </div>
           <div class="form-check mb-2">
-            <input class="form-check-input input-filter" type="checkbox" id="select-business" data-value="business"
+            <input class="form-check-input input-filter" type="checkbox" id="select-default" data-value="Wodefaultrk"
               checked>
-            <label class="form-check-label" for="select-business">Business</label>
+            <label class="form-check-label" for="select-default">default</label>
           </div>
           <div class="form-check form-check-warning mb-2">
             <input class="form-check-input input-filter" type="checkbox" id="select-family" data-value="family" checked>
@@ -118,8 +118,8 @@
               <select class="select2 select-event-label form-select" 
                       id="eventLabel" name="eventLabel">
                 {% for group in _groups %}
-                <option data-label="primary" value="{{group[0]}}" selected>{{group[1]}}</option>  
-                {% endfor %}
+                <option data-label="primary" value="Business" selected>Business</option>  
+                {% endfor %} <!-- Data Lable RGB code  -->
                 
               </select>
             </div>

@@ -9,19 +9,22 @@ class _Group(object):
         self.title = title
         self.description = description
         self.color = color
+    
+    def __repr__(self)-> str:
+        return f'{self.__class__.__name__} <{self.id} - {self.title}>'
 
 
 class GroupManager():
     def __init__(self, pickle_data:bytes=None):
         self.groups:dict[int, _Group] = dict()
         self.last_id = 1
-        
+
         # Default
         self.groups[0] = _Group(
                 id=0,
-                title='defualt',
-                description='default',
-                color='#ffff')
+                title='Personal',
+                description='Personal [Defualt Group]',
+                color='danger')
         
         if pickle_data:    
             self.set_groups(loads(pickle_data))

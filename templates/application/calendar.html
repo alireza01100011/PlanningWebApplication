@@ -31,6 +31,29 @@
 
 
 {% block content %}
+<!-- Group|Lable Data -->
+<samp id='groupDataTag' 
+      url_get="{{url_for('group.send_json')}}" 
+      data='{ "Personal": "danger" }' 
+      hidden></samp>
+
+<!-- 
+  I know this method is very stupid,
+   but I didn't have enough time to make it!
+   I will definitely fix it 
+-->
+<script>
+let dataTag = document.getElementById('groupDataTag');
+xhr = new XMLHttpRequest();
+xhr.open("GET", dataTag.getAttribute('url_get'), true);
+xhr.setRequestHeader('Content-Type', 'application/json');
+xhr.onload = function () {
+    dataTag.setAttribute('data', this.responseText)};
+xhr.send()
+</script>
+<!-- /Group|Lable Data -->
+
+
 <div class="card app-calendar-wrapper">
   <div class="row g-0">
     <!-- Calendar Sidebar -->
@@ -63,29 +86,13 @@
         </div>
 
         <div class="app-calendar-events-filter">
-          <div class="form-check form-check-danger mb-2">
-            <input class="form-check-input input-filter" type="checkbox" id="select-personal" data-value="personal"
-              checked>
-            <label class="form-check-label" for="select-personal">Personal</label>
-          </div>
-          <div class="form-check mb-2">
-            <input class="form-check-input input-filter" type="checkbox" id="select-default" data-value="Wodefaultrk"
-              checked>
-            <label class="form-check-label" for="select-default">default</label>
-          </div>
-          <div class="form-check form-check-warning mb-2">
-            <input class="form-check-input input-filter" type="checkbox" id="select-family" data-value="family" checked>
-            <label class="form-check-label" for="select-family">Family</label>
-          </div>
-          <div class="form-check form-check-success mb-2">
-            <input class="form-check-input input-filter" type="checkbox" id="select-holiday" data-value="holiday"
-              checked>
-            <label class="form-check-label" for="select-holiday">Holiday</label>
-          </div>
-          <div class="form-check form-check-info">
-            <input class="form-check-input input-filter" type="checkbox" id="select-etc" data-value="etc" checked>
-            <label class="form-check-label" for="select-etc">ETC</label>
-          </div>
+          {% for title, color, id in _groups %}
+            <div class="form-check form-check-{{color}} mb-2">
+              <input class="form-check-input input-filter" type="checkbox" id="select-{{title.lower()}}" data-value="{{title.lower()}}"
+                checked>
+              <label class="form-check-label" for="select-{{title.lower()}}">{{title}}</label>
+            </div>
+          {% endfor %}
         </div>
       </div>
     </div>
@@ -115,11 +122,11 @@
             </div>
             <div class="mb-3">
               <label class="form-label" for="eventLabel">Label</label>
-              <select class="select2 select-event-label form-select" 
-                      id="eventLabel" name="eventLabel">
-                {% for group in _groups %}
-                <option data-label="primary" value="Business" selected>Business</option>  
-                {% endfor %} <!-- Data Lable RGB code  -->
+              <select class="select2 select-event-label form-select" id="eventLabel" name="eventLabel">
+
+                {% for title, color, id in _groups %}
+                <option data-label="{{color}}" value="{{title}}">{{title}}</option>  
+                {% endfor %}
                 
               </select>
             </div>

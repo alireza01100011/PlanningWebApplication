@@ -6,13 +6,7 @@ isRtl && (direction = "rtl"), document.addEventListener("DOMContentLoaded", func
             g = document.querySelector(".app-calendar-sidebar"),
             b = document.getElementById("addEventSidebar"),
             h = document.querySelector(".app-overlay"),
-            y = {
-                Business: "primary",
-                Holiday: "success",
-                Personal: "danger",
-                Family: "warning",
-                ETC: "info"
-            },
+            y = JSON.parse(document.getElementById("groupDataTag").getAttribute('data')),
             S = document.querySelector(".offcanvas-title"),
             L = document.querySelector(".btn-toggle-sidebar"),
             E = document.querySelector('button[type="submit"]'),
@@ -34,7 +28,7 @@ isRtl && (direction = "rtl"), document.addEventListener("DOMContentLoaded", func
             r = !1,
             e;
         const B = new bootstrap.Offcanvas(b);
-
+        console.log(y);
         function t(e) {
             return e.id ? "<span class='badge badge-dot bg-" + $(e.element).data("label") + " me-2'> </span>" + e.text : e.text
         }

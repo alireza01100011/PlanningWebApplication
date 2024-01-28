@@ -1,4 +1,4 @@
-from flask import render_template, request, abort, flash, redirect, url_for
+from flask import render_template, request, abort, flash, redirect, url_for, jsonify
 from flask_login import current_user
 from sqlalchemy.exc import IntegrityError
 
@@ -133,3 +133,16 @@ def remove(id:int):
         flash('Group delete successfully', category='success')
     
     redirect(url_for('group.manage'))
+
+
+@buleprint_group.route('/json/get', methods=['GET'])
+def send_json():
+    group_manager = GroupManager(
+        pickle_data=current_user.groups)
+    
+    data = {
+        group.title : group.color
+        for group in group_manager.groups.values()
+        }
+    
+    return jsonify(data)

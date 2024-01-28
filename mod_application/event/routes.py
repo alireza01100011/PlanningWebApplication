@@ -28,7 +28,7 @@ def manage():
     
     # Fill in the group field
     groups = [
-        (group.id, group.title)
+        (group.title, group.color, group.id)
         for group in group_manager.list_groups]
 
     # manager_event = EventManager(

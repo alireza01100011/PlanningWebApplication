@@ -10,10 +10,10 @@ class Testevents(unittest.TestCase):
         cls.old_event_manager = event.EventManager()
         cls.add_n = 5
         for _i in range(1, cls.add_n):
-            title, des, t_s, t_e, group, r, color= \
+            title, des, t_s, t_e, group, r, url= \
                 f'event_{_i}', f'event_{_i}' , 1702999710, 1703000710, \
                 0, [], '#fff47'
-            cls.old_event_manager.add_event(title, des, t_s, t_e, group, r, color)
+            cls.old_event_manager.add_event(title, des, t_s, t_e, group, r, url)
         
         # Test for building the event pool with the method (__init__)
         cls.event_manager = event.EventManager(
@@ -38,12 +38,12 @@ class Testevents(unittest.TestCase):
         end_time = 115487
         description = 'new description'
         group_id = 1
-        color = '#1254'
+        url = '#1254'
         reminders = [1564,100,60]
         self.event_manager.update_event(id,
                                         title=title, start_time=start_time,
                                         end_time=end_time, description=description,
-                                        group_id=group_id, color=color, reminders=reminders)
+                                        group_id=group_id, url=url, reminders=reminders)
         event = self.event_manager.events[id]
         self.assertEqual(event.id, id)
         self.assertEqual(event.title, title)
@@ -51,7 +51,7 @@ class Testevents(unittest.TestCase):
         self.assertEqual(event.end_time, end_time)
         self.assertEqual(event.description, description)
         self.assertEqual(event.group_id, group_id)
-        self.assertEqual(event.color, color)
+        self.assertEqual(event.url, url)
         self.assertEqual(event.reminders, reminders)
     
     def test_return_events_in_pickle(self):

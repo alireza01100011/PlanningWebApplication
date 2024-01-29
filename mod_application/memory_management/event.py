@@ -18,21 +18,25 @@ except ImportError:
 
 class _Event():
     __slots__ = ['id', 'title', 'description', 'start_time',
-                 'end_time', 'color', 'group_id', 'reminders']
+                 'end_time', 'url', 'group_id', 'reminders', 'all_day']
     
     def __init__(self, id:int, title:str, description:str,
                  start_time:int, end_time:int, group:None|_Group,
-                 reminders:list[int], color:str):
+                 reminders:list[int], url:str, all_day:bool=False):
         self.id = id
         self.title = title
         self.description = description
         self.start_time = start_time
         self.end_time = end_time
         self.reminders = reminders
-        self.color = color
+        self.url = url
+        self.all_day = all_day
 
         if group : self.group_id = group.id
         else : self.group_id = 0
+    
+    def __repr__(self)-> str:
+        return f'{self.__class__.__name__} <{self.id} - {self.title}>'
 
 
 class EventManager():
@@ -64,7 +68,7 @@ class EventManager():
 
     def add_event(self, title:str, description:str,
                  start_time:int, end_time:int, group:None,
-                 reminders:list[int], color:str):
+                 reminders:list[int], url:str, all_day:bool=False):
         
         while True:
             self.last_id += 1
@@ -76,7 +80,7 @@ class EventManager():
                 id=self.last_id, title=title, group=group,
                 description=description, end_time=end_time,
                 start_time=start_time, reminders=reminders,
-                color=color)
+                url=url,all_day=all_day)
     #  End Function
 
     def delete_event(self, id:int):
@@ -88,7 +92,7 @@ class EventManager():
                      title:str=None, reminders:list[int]=None,
                      description:str=None, start_time:int=None,
                      end_time:int=None, group_id:None=0,
-                     color:str=None)-> None | KeyError:
+                     url:str=None, all_day:bool=None)-> None | KeyError:
         
         if not self.events.get(id):
             raise KeyError
@@ -96,12 +100,13 @@ class EventManager():
         _event = self.events[id]
         _event.title = title or _event.title
         _event.description = description or _event.description
-        _event.color = color or _event.color
+        _event.url = url or _event.url
         _event.start_time = start_time or _event.start_time
         _event.end_time = end_time or _event.end_time
         _event.group_id = group_id or _event.group_id
         _event.reminders = reminders or _event.reminders
-
+        if _event.all_day != None:
+            _event.all_day = all_day
         # Save
         self.events[id] = _event ; del _event
     #  End Function

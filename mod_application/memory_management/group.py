@@ -1,27 +1,24 @@
 from pickle import dumps, loads
 
 class _Group(object):
-    __slots__ = ['id', 'title', 'description', 'color']
+    __slots__ = ['title', 'description', 'color']
 
-    def __init__(self, id:int, title:str,
+    def __init__(self, title:str,
                  description:str, color:str):
-        self.id = id
         self.title = title
         self.description = description
         self.color = color
     
     def __repr__(self)-> str:
-        return f'{self.__class__.__name__} <{self.id} - {self.title}>'
+        return f'{self.__class__.__name__} <{self.title} - {self.color}>'
 
 
 class GroupManager():
     def __init__(self, pickle_data:bytes=None):
         self.groups:dict[int, _Group] = dict()
-        self.last_id = 1
 
         # Default
-        self.groups[0] = _Group(
-                id=0,
+        self.groups['Personal'] = _Group(
                 title='Personal',
                 description='Personal [Defualt Group]',
                 color='danger')
@@ -45,43 +42,39 @@ class GroupManager():
         
     def set_groups(self, groups:list[_Group]):
         self.groups = dict()
-        for _g in groups : self.groups[_g.id] = _g
-        self.last_id = len(groups)
+        for _g in groups : self.groups[_g.title] = _g
+
     #  End Function
         
     def add_group(self, title:str, color:str,
-                 description:str)-> int :
-       while True:
-           self.last_id += 1
-           if not self.groups.get(self.last_id):
-               break
-        
-       self.groups[self.last_id] = \
+                 description:str)-> str :
+
+       self.groups[title] = \
             _Group(
-                id=self.last_id, title=title,
+                title=title,
                 description=description, color=color)
        
-       return self.last_id
+       return title
     #  End Function
 
-    def update_group(self, id:int, 
+    def update_group(self, target_title:str,
                      title:str=None, description:str=None,
                      color:str=None)-> None | KeyError:
         
-        if not self.groups.get(id):
+        if not self.groups.get(target_title):
             raise KeyError
 
-        _group = self.groups[id]
+        _group = self.groups[target_title]
         _group.title = title or _group.title
         _group.description = description or _group.description
         _group.color = color or _group.color
 
-        self.groups[id] = _group; del _group
+        self.groups[title] = _group; del _group
     #  End Function
         
-    def delete_group(self, id:int)-> KeyError | None:
-        if not self.groups.get(id):
+    def delete_group(self, title:str)-> KeyError | None:
+        if not self.groups.get(title):
             raise KeyError
-        del self.groups[id]
+        del self.groups[title]
     #  End Function
 

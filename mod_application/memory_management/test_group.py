@@ -38,13 +38,13 @@ class TestGroup(unittest.TestCase):
     def test_set_groups(self):
         _groupsTemp = list()
         for g in range(1, self.number_create_group):
-            title = f'{g}_title'
+            title = f'{g}-test'
             des = f'{g}_des'
             color = f'#{g}8475'
             
             _groupsTemp.append(
                 group._Group(
-                    id=g, title=title,
+                    title=title,
                     description=des, color=color)
                 )
             
@@ -58,12 +58,12 @@ class TestGroup(unittest.TestCase):
         title = 'New Title'
         des = "New Description"
         color = "#ffff"
-        id = list(self.group_manager.groups.keys())[0]
+        title_get = list(self.group_manager.groups.keys())[0]
 
-        self.group_manager.update_group(id=id, title=title,
+        self.group_manager.update_group(target_title=title_get, title=title,
                                         color=color, description=des)
         
-        _group = self.group_manager.groups.get(id)
+        _group = self.group_manager.groups.get(title_get)
 
         self.assertEqual(title, _group.title)
         self.assertEqual(color, _group.color)
@@ -72,8 +72,8 @@ class TestGroup(unittest.TestCase):
     def test_delete_group(self):
         number_of_groups_before_delete = len(self.group_manager.list_groups)
         
-        id = list(self.group_manager.groups.keys())[0]
-        self.group_manager.delete_group(id)
+        title_get = list(self.group_manager.groups.keys())[0]
+        self.group_manager.delete_group(title_get)
         
         self.assertEqual((number_of_groups_before_delete - 1),
                          len(self.group_manager.list_groups))

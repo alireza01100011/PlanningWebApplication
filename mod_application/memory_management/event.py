@@ -18,7 +18,7 @@ except ImportError:
 
 class _Event():
     __slots__ = ['id', 'title', 'description', 'start_time',
-                 'end_time', 'url', 'group_id', 'reminders', 'all_day']
+                 'end_time', 'url', 'group_title', 'reminders', 'all_day']
     
     def __init__(self, id:int, title:str, description:str,
                  start_time:int, end_time:int, group:None|_Group,
@@ -32,8 +32,8 @@ class _Event():
         self.url = url
         self.all_day = all_day
 
-        if group : self.group_id = group.id
-        else : self.group_id = 0
+        if group : self.group_title = group.title
+        else : self.group_title = 'Personal'
     
     def __repr__(self)-> str:
         return f'{self.__class__.__name__} <{self.id} - {self.title}>'
@@ -91,7 +91,7 @@ class EventManager():
     def update_event(self, id:int,
                      title:str=None, reminders:list[int]=None,
                      description:str=None, start_time:int=None,
-                     end_time:int=None, group_id:None=0,
+                     end_time:int=None, group_title:None=0,
                      url:str=None, all_day:bool=None)-> None | KeyError:
         
         if not self.events.get(id):
@@ -103,7 +103,7 @@ class EventManager():
         _event.url = url or _event.url
         _event.start_time = start_time or _event.start_time
         _event.end_time = end_time or _event.end_time
-        _event.group_id = group_id or _event.group_id
+        _event.group_title = group_title or _event.group_title
         _event.reminders = reminders or _event.reminders
         if _event.all_day != None:
             _event.all_day = all_day

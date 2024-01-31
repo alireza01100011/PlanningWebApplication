@@ -234,8 +234,8 @@ def send_json():
             "id": event.id, 
             "url":  event.url, 
             "title": event.title, 
-            "start": int(event.start_time), 
-            "end": int(event.end_time), 
+            "start": int(event.start_time) * 1000, 
+            "end": int(event.end_time) * 1000, 
             "allDay": event.all_day, 
             "extendedProps": { 
                 "calendar": group_manager.groups[event.group_title].title

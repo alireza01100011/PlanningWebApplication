@@ -32,7 +32,7 @@ class _Event():
         self.url = url
         self.all_day = all_day
 
-        if group : self.group_title = group.title
+        if group : self.group_title = group
         else : self.group_title = 'Personal'
     
     def __repr__(self)-> str:

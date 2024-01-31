@@ -25,6 +25,9 @@ class _Task:
         self.done = done
         if group_title : self.group_title = group_title
         else : self.group_title = 'Personal'
+    
+    def __rper__(self):
+        return f'{self.__class__.__name__} <{self.name}, {self.done}>'
 
 
 class TasksManager:

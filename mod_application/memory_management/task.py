@@ -16,13 +16,15 @@ except ImportError:
     from group import _Group
 
 class _Task:
-    __slots__ = ["id", "name", "time_start", "done", "group_title"]
+    __slots__ = ["id", "name", "time_start", "done", "group_title", "description"]
     def __init__(self, id:int, group_title:str|None,
-                 name:str , time_start:int, done:bool=False)-> None:
+                 name:str , time_start:int,
+                 description:str='', done:bool=False)-> None:
         self.id = id
         self.name = name
         self.time_start = time_start
         self.done = done
+        self.description=description
         if group_title : self.group_title = group_title
         else : self.group_title = 'Personal'
     
@@ -56,7 +58,9 @@ class TasksManager:
     #  End Function
         
     def add_task(self, name:str,
-                time_start:int, group_title:str=None)-> None:
+                time_start:int,
+                description:str='',
+                group_title:str=None)-> None:
         
         while True:
             self.last_id += 1
@@ -66,7 +70,9 @@ class TasksManager:
 
 
         self.tasks[self.last_id] = _Task(id=self.last_id ,name=name,
-                            time_start=time_start, group_title=group_title)
+                            time_start=time_start,
+                            description=description,
+                            group_title=group_title)
     #  End Function
         
     def done_task(self, id:int):
@@ -75,9 +81,12 @@ class TasksManager:
         
     def update_task(self,
                     id:int, name:str=None,
-                    time_start:int=None, group_title:str=''):
+                    time_start:int=None,
+                    description:str='',
+                    group_title:str=''):
         _task = self.tasks.get(id)
         _task.name = name or _task.name
+        _task.description = description or _task.description
         _task.time_start = time_start or _task.time_start
         _task.group_title = group_title or _task.group_title
         

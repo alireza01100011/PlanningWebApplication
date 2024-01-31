@@ -10,7 +10,7 @@ class TaskForm(FlaskForm):
                         validators=(DataRequired(), Length(1, 128)))
     
     description = TextAreaField(description='Add Description',
-                                validators=(Length(1, 2048),))
+                                validators=(Length(0, 2048),))
     
     group = SelectField(label='Select The Task Group')
 

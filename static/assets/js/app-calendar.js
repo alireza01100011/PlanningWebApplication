@@ -28,22 +28,25 @@ isRtl && (direction = "rtl"), document.addEventListener("DOMContentLoaded", func
             r = !1,
             e;
         const B = new bootstrap.Offcanvas(b);
-        console.log(y);
         function t(e) {
+
             return e.id ? "<span class='badge badge-dot bg-" + $(e.element).data("label") + " me-2'> </span>" + e.text : e.text
         }
 
         function n(e) {
+
             return e.id ? "<div class='d-flex flex-wrap align-items-center'><div class='avatar avatar-xs me-2'><img src='" + assetsPath + "img/avatars/" + $(e.element).data("avatar") + "' alt='avatar' class='rounded-circle' /></div>" + e.text + "</div>" : e.text
         }
         var d, o;
 
         function s() {
+            
             var e = document.querySelector(".fc-sidebarToggle-button");
             for (e.classList.remove("fc-button-primary"), e.classList.add("d-lg-none", "d-inline-block", "ps-0"); e.firstChild;) e.firstChild.remove();
             e.setAttribute("data-bs-toggle", "sidebar"), e.setAttribute("data-overlay", ""), e.setAttribute("data-target", "#app-calendar-sidebar"), e.insertAdjacentHTML("beforeend", '<i class="bx bx-menu bx-sm text-body"></i>')
         }
         T.length && T.wrap('<div class="position-relative"></div>').select({
+            
             placeholder: "Select value",
             dropdownParent: T.parent(),
             templateResult: t,
@@ -180,35 +183,62 @@ isRtl && (direction = "rtl"), document.addEventListener("DOMContentLoaded", func
             w.classList.remove("d-none")
         }), E.addEventListener("click", e => {
             var t, n;
-            E.classList.contains("btn-add-event") ? r && (n = {
-                id: i.getEvents().length + 1,
-                title: x.value,
-                start: q.value,
-                end: D.value,
-                startStr: q.value,
-                endStr: D.value,
-                display: "block",
-                extendedProps: {
-                    location: A.value,
-                    guests: P.val(),
-                    calendar: T.val(),
-                    description: F.value
-                }
-            }, M.value && (n.url = M.value), Y.checked && (n.allDay = !0), n = n, l.push(n), i.refetchEvents(), B.hide()) : r && (n = {
-                id: a.id,
-                title: x.value,
-                start: q.value,
-                end: D.value,
-                url: M.value,
-                extendedProps: {
-                    location: A.value,
-                    guests: P.val(),
-                    calendar: T.val(),
-                    description: F.value
+            E.classList.contains("btn-add-event") ? r && (
+
+                n = {
+                    id: i.getEvents().length + 1,
+                    title: x.value,
+                    start: q.value,
+                    end: D.value,
+                    startStr: q.value,
+                    endStr: D.value,
+                    display: "block",
+                    extendedProps: {
+                        calendar: T.val(),
+                        description: F.value
+                    }
                 },
-                display: "block",
-                allDay: !!Y.checked
-            }, (t = n).id = parseInt(t.id), l[l.findIndex(e => e.id === t.id)] = t, i.refetchEvents(), B.hide())
+                fetch("/event/add", {
+                    method: "POST",
+                    headers: {
+                        "Content-type": "application/json; charset=UTF-8"
+                    },
+                    body: JSON.stringify(n)
+                  }).then(res => {
+                    console.log("The request to add an event has been sent! response:", res);
+                  }),
+             M.value && (n.url = M.value),
+              Y.checked && (n.allDay = !0), n = n, l.push(n), i.refetchEvents(), B.hide()) : r && (
+                n = {
+                    id: a.id,
+                    title: x.value,
+                    start: q.value,
+                    end: D.value,
+                    url: M.value,
+                    extendedProps: {
+                        calendar: T.val(),
+                        description: F.value
+                        },
+                    display: "block",
+                    allDay: !!Y.checked
+                    },
+                (t = n).id = parseInt(t.id),
+                l[l.findIndex(e => e.id === t.id)] = t,
+
+                fetch(`/event/edit/${a.id}`, {
+                    method: "POST", 
+                    headers: {
+                        "Content-type": "application/json; charset=UTF-8"
+                    },
+                    body: JSON.stringify(n)
+                  }).then(res => {
+                    console.log("The request to update an event has been sent! response:", res);
+                }),
+                
+                i.refetchEvents(),
+                B.hide()
+
+                )
         }), k.addEventListener("click", e => {
             var t;
             t = parseInt(a.id), l = l.filter(function (e) {

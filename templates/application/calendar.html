@@ -86,7 +86,7 @@ xhr.send()
         </div>
 
         <div class="app-calendar-events-filter">
-          {% for title, color, id in _groups %}
+          {% for title, color in _groups %}
             <div class="form-check form-check-{{color}} mb-2">
               <input class="form-check-input input-filter" type="checkbox" id="select-{{title.lower()}}" data-value="{{title.lower()}}"
                 checked>
@@ -124,7 +124,7 @@ xhr.send()
               <label class="form-label" for="eventLabel">Label</label>
               <select class="select2 select-event-label form-select" id="eventLabel" name="eventLabel">
 
-                {% for title, color, id in _groups %}
+                {% for title, color in _groups %}
                 <option data-label="{{color}}" value="{{title}}">{{title}}</option>  
                 {% endfor %}
                 
@@ -198,4 +198,11 @@ xhr.send()
   </div>
 </div>
 
+<script>
+  function asfsaf(){
+    console.log('submit')
+  }
+  let formev = document.getElementById('eventForm');
+  formev.addEventListener('submit', asfsaf);
+</script>
 {% endblock content %}

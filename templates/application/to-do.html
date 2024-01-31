@@ -4,68 +4,55 @@
   <!-- Task List Table -->
   <div class="card">
     <div class="card-header border-bottom">
-      <h5 class="card-title">Search Task</h5>
-      <div class="d-flex justify-content-between align-items-center row py-3 gap-3 gap-md-0">
-        <div class="col-md-4 user_role"></div>
-        <div class="col-md-4 user_plan"></div>
-        <div class="col-md-4 user_status"></div>
+      <h5 class="card-title">To Do List</h5>
+      <div class="d-flex justify-content-between align-items-center row py-3 gap-4 gap-md-0">
+        <div class="col-md-4 d-flex align-items-center justify-content-end flex-md-row flex-column ">
+
+          <form action="{{url_for('task.manage')}}" method="get"
+            class="d-flex align-items-center justify-content-end flex-md-row flex-column">
+
+            <select class="form-select text-capitalize" name="group">
+              {% for group in groups %}
+                {% if _filter_group == group.title %}
+                  <option value="{{group.title}}" selected>
+                    {{group.title}} 
+                  </option>
+                {% else %}
+                  <option value="{{group.title}}">
+                    {{group.title}}
+                  </option>
+                {% endif %}
+              {% endfor %}
+            </select>
+
+            <button class="btn btn-primary" style="margin: 10px;" type="submit">Filter</button>
+
+          </form>
+        </div>
+
+
+
+        <div class="col-md-4 user_status">
+          <button class="dt-button add-new btn btn-primary" style="width: 100%;" tabindex="0"
+            aria-controls="DataTables_Table_0" type="button" data-bs-toggle="offcanvas"
+            data-bs-target="#offcanvasAddUser">
+
+            <span>
+              <i class="bx bx-plus me-0 me-sm-1"></i>
+              <span class="d-none d-sm-inline-block">
+                Add New User
+              </span>
+            </span>
+
+          </button>
+        </div>
+
       </div>
     </div>
 
     <!-- Table Task -->
     <div class="card-datatable table-responsive">
       <div id="DataTables_Table_0_wrapper" class="dataTables_wrapper dt-bootstrap5 no-footer">
-
-        <div class="row mx-2">
-          <!-- Total Item -->
-          <div class="col-md-2">
-            <div class="me-3">
-              <div class="dataTables_length" id="DataTables_Table_0_length">
-                <label>
-                  <select name="DataTables_Table_0_length" aria-controls="DataTables_Table_0" class="form-select">
-
-                    <option value="10">10</option>
-                    <option value="25">25</option>
-                    <option value="50">50</option>
-                    <option value="100">100</option>
-
-                  </select>
-                </label>
-              </div>
-            </div>
-          </div>
-          <!-- /Total Item -->
-
-
-          <div class="col-md-10">
-            <div
-              class="dt-action-buttons text-xl-end text-lg-start text-md-end text-start d-flex
-                                                  align-items-center justify-content-end flex-md-row flex-column mb-3 mb-md-0">
-
-              <!-- Search -->
-              <div id="DataTables_Table_0_filter" class="dataTables_filter">
-                <label>
-                  <input type="search" class="form-control" placeholder="Search.." aria-controls="DataTables_Table_0">
-                </label>
-              </div>
-              <!-- /Search -->
-
-              <!-- Add Task -->
-              <div class="dt-buttons">
-
-                <button class="dt-button add-new btn btn-primary" tabindex="0" aria-controls="DataTables_Table_0"
-                  type="button" data-bs-toggle="offcanvas" data-bs-target="#offcanvasAddUser">
-
-                  <span>
-                    <i class="bx bx-plus me-0 me-sm-2"></i>
-                    <span class="d-none d-lg-inline-block">Add</span>
-                  </span>
-                </button>
-              </div>
-              <!-- /Add Task -->
-            </div>
-          </div>
-        </div>
 
 
         <!-- Table -->
@@ -104,9 +91,57 @@
             </tr>
           </thead>
           <tbody>
-            <tr class="odd">
-              <td valign="top" colspan="6" class="dataTables_empty">Loading...</td>
+            {% for task in tasks %}
+            <tr class="odd" title="Description : {{task.description}}">
+              <td class="  control" tabindex="0" style="display: none;"></td>
+              <td class="sorting_1">
+                <div class="d-flex justify-content-start align-items-center user-name">
+                  <div class="avatar-wrapper">
+
+                    <div class="d-flex flex-column">
+                      <span class="fw-medium">{{task.name}}</span>
+                    </div>
+                  </div>
+              </td>
+              <td>
+                <span class="text-truncate d-flex align-items-center">
+                  {{task.group_title}}
+                </span>
+              </td>
+              <td>
+                <span class="fw-medium">
+                  {{epoch_to_datetime(task.time_start)}}
+
+                </span>
+              </td>
+              <td>
+                <div class="d-inline-block text-nowrap">
+
+                  <a href="{{url_for('task.switching', id=task.id)}}">
+                    {% if task.done %}
+                    <span class="badge bg-label-success">Done</span>
+                    {% else %}
+                    <span class="badge bg-label-warning">Warning</span>
+                    {% endif %}
+
+                  </a>
+
+                  <a href="{{url_for('task.edit', id=task.id)}}">
+                    <button class="btn btn-sm btn-icon">
+                      <i class="bx bx-edit"></i>
+                    </button>
+                  </a>
+
+                  <a href="{{url_for('task.remove', id=task.id)}}">
+                    <button class="btn btn-sm btn-icon delete-record">
+                      <i class="bx bx-trash"></i>
+                    </button>
+                  </a>
+
+                </div>
+              </td>
             </tr>
+            {% endfor %}
           </tbody>
         </table>
         <!-- /Table -->
@@ -118,7 +153,7 @@
         <div class="row mx-2">
           <div class="col-sm-12 col-md-6">
             <div class="dataTables_info" id="DataTables_Table_0_info" role="status" aria-live="polite">
-              Showing 0 to 0 of 0 entries</div>
+              Showing {{tasks|length}}</div>
           </div>
           <div class="col-sm-12 col-md-6">
             <div class="dataTables_paginate paging_simple_numbers" id="DataTables_Table_0_paginate">
@@ -145,10 +180,10 @@
         <button type="button" class="btn-close text-reset" data-bs-dismiss="offcanvas" aria-label="Close"></button>
       </div>
       <div class="offcanvas-body mx-0 flex-grow-0">
-        <form action="{{ url_for('task.add') }}" method="post" 
-        class="add-new-user pt-0 fv-plugins-bootstrap5 fv-plugins-framework">
+        <form action="{{ url_for('task.add') }}" method="post"
+          class="add-new-user pt-0 fv-plugins-bootstrap5 fv-plugins-framework">
 
-        {{ form.hidden_tag() }}
+          {{ form.hidden_tag() }}
           <div class="mb-3">
             {{ form.title.label(class='form-label') }}
             {{ form.title(class='form-control') }}
@@ -186,4 +221,9 @@
     </div>
   </div>
 </div>
+
+<script>
+  document.querySelector('#').click();
+
+</script>
 {% endblock content %}

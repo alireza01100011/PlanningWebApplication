@@ -14,15 +14,18 @@ from ..memory_management.group import GroupManager, _Group
 
 from utlis.flask_login import login_required
 from utlis.time_convert import string_to_int as Time_SI
+from utlis.time_convert import epoch_to_datetime
 
 sys.path.append("../..")
 from mod_user.user.models import User as db_user
 
 from app import db
 
+
 @buleprint_task.route('/')
 @login_required(_next_endpoint='task.manage')
 def manage():
+    filter_group = request.args.get('group', default='all', type=str)
     user:db_user = db_user.query.get(current_user.id)
 
     task_manager = TasksManager(
@@ -30,14 +33,32 @@ def manage():
 
     group_manager = GroupManager(
         pickle_data=user.groups)
-    
+
+    groups = group_manager.list_groups
+    tasks = []
+
+    if filter_group.lower() == 'all':
+        tasks = task_manager.list_tasks
+    else :
+        tasks = [
+        tk 
+        for tk in task_manager.list_tasks
+        if tk.group_title == filter]
+
+
     form = TaskForm()
     form.group.choices = [
         (group.title, group.title)
-        for group in group_manager.list_groups]
+        for group in groups]
+    
+    
+    groups.insert(0, _Group('All', 'All Group', ''))
 
-    return render_template('application/to-do.html', title='To Do',
-                       form=form ) # tasks=task_manager.list_tasks
+    return render_template('application/to-do.html',
+        title='To Do', form=form,
+        tasks=task_manager.list_tasks,
+        groups=groups,
+        _filter_group=filter_group ) # tasks=task_manager.list_tasks
 
 
 
@@ -76,6 +97,7 @@ def add():
         task_manager.add_task(
             name=form.title.data,
             time_start=Time_SI(str(form.deadline.data), format='%Y-%m-%d'),
+            description=form.description.data,
             group_title=_group)
         
         user.tasks[0].tasks = task_manager.return_tasks_in_pickle
@@ -105,15 +127,26 @@ def edit(id:int):
     _selected_task = task_manager.tasks.get(int(id))
 
     # Task Not Found
-    if not _task_selected:
+    if not _selected_task:
         return abort(404)
     # ----
 
     group_manager = GroupManager(
         pickle_data=current_user.groups)
     
+    form.group.choices = [
+        (group.title, group.title)
+        for group in group_manager.list_groups]
+
     if request.method == 'GET':
-        return redirect(url_for('task.manage'))
+        form.title.data = _selected_task.name
+        form.group.data = _selected_task.group_title
+        form.description.data = _selected_task.description
+        form.deadline.data = datetime.strptime(
+            epoch_to_datetime(
+            int(_selected_task.time_start),
+            format='%Y-%m-d'),
+            '%Y-%m-d')
 
 
     if request.method == 'POST':
@@ -123,7 +156,6 @@ def edit(id:int):
                                     title='To Do', form=form)
         
         # Does this group exist? If not, select the default group
-        _group = 0 # Defualt ID
         if group_manager.groups.get(form.group.data):
             _group = form.group.data
 
@@ -131,8 +163,9 @@ def edit(id:int):
         task_manager.update_task(
             id = int(id),
             name = form.title.data,
-            time_start= form.start.data,
-            group_id = _group)
+            time_start= Time_SI(str(form.deadline.data), format='%Y-%m-%d'),
+            description=form.description.data,
+            group_title = _group)
         
         current_user.tasks[0].tasks = task_manager.return_tasks_in_pickle
 
@@ -147,7 +180,7 @@ def edit(id:int):
             flash('The task was edited successfully', category='success')
             return redirect(url_for('task.manage'))
             
-    return render_template('application/to-do.html', 
+    return render_template('application/form-edit-task.html', 
                         title='To Do', form=form)
 
 
@@ -161,7 +194,7 @@ def remove(id:int):
     _selected_task = task_manager.tasks.get(int(id))
 
     # Task Not Found
-    if not _task_selected:
+    if not _selected_task:
         return abort(404)
     # ----
 
@@ -179,3 +212,38 @@ def remove(id:int):
     else:
         flash('Task delete successfully', category='success')
         redirect(url_for('task.manage'))
+
+    return redirect(url_for('task.manage'))
+
+
+@buleprint_task.route('switching/<int:id>')
+def switching(id):
+    user:db_user = db_user.query.get(current_user.id)
+
+    task_manager = TasksManager(
+        pickle_data=current_user.tasks[0].tasks)
+    
+    _selected_task = task_manager.tasks.get(int(id))
+
+    # Task Not Found
+    if not _selected_task:
+        return abort(404)
+    # ----
+
+    task_manager.done_task(id)
+
+    current_user.tasks[0].tasks = task_manager.return_tasks_in_pickle
+
+    try:
+        db.session.commit()
+            
+    except IndentationError:
+        db.session.rollback()
+        flash('Something went wrong, please try again', category='error')
+    
+    else:
+        flash('Change the status of the task successfully', category='success')
+        redirect(url_for('task.manage'))
+
+    
+    return redirect(url_for('task.manage'))

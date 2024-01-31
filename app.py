@@ -28,10 +28,10 @@ app.register_blueprint(group)
 app.register_blueprint(task)
 app.register_blueprint(event)
 
-
-
-
-
+from utlis.time_convert import epoch_to_datetime as EpochToDatetime
+@app.template_global()
+def epoch_to_datetime(epochTime, format='%Y-%m-%d', _division:int=1):
+    return EpochToDatetime(int(epochTime)/ _division, format)
 
 
 from flask import request

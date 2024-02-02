@@ -66,7 +66,6 @@ def add():
                 pickle_data=user.events[0].events)
 
         
-        group_title = 0 # Default Group ID
         _calendar = extendedProps.get('calendar')
         if group_manager.groups.get(_calendar):
             group_title = _calendar
@@ -101,59 +100,54 @@ def add():
 
 @blueprint_event.route('/edit/<int:id>', methods=['GET', 'POST'])
 def edit(id:int):
-    form = EventForm()
-    current_user:db_user = current_user
+    user:db_user = db_user.query.get(current_user.id)
     
     event_manager = EventManager(
-        pickle_data=current_user.event.events)
+        pickle_data=user.events[0].events)
     
     _selected_event:_Event|None = \
         event_manager.events.get(int(id))
-    
+
     # EventNot Found 
     if not _selected_event:
         return abort(404)
     # ----
 
     group_manager = GroupManager(
-        pickle_data=current_user.groups)
+        pickle_data=user.groups)
 
 
     if request.method == 'GET':
-        # Fill in the group field
-        form.group.choices = [
-            (group.id, group.title)
-            for group in group_manager.list_groups]
-        
-        form.title.data = _selected_event.title
-        form.end.data = _selected_event.end_time
-        form.group.data = _selected_event.group_id
-        form.start.data = _selected_event.start_time
-        form.reminder.data = _selected_event.reminders
-        form.description.data = _selected_event.description
+        return redirect(url_for('event.manage'))
 
     # ----
 
     if request.method == 'POST':
-        if not form.validate_on_submit():
-            flash('Invalid forum', category='error')
-            return render_template('',
-                                title=' Event ', form=form)
-        # ----
+        form_data = request.get_json()
         
-        _group_id = 0 # Default Group ID
-        if group_manager.groups.get(int(id)):
-            _group_id = form.group.data
+        if not validate_event_form(form_data):
+            return abort(400)
+        # ----
+        extendedProps:dict = form_data.get('extendedProps')
+        _calendar = extendedProps.get('calendar')
+        if group_manager.groups.get(_calendar):
+            group_title = _calendar
         # ----
             
         # Update Event
         event_manager.update_event(
             id=int(id),
-            title=form.title.data,
-            description=form.description.data,
-            start_time=form.start.data,
-            reminders=form.reminder.data,
-            group_id=_group_id)
+            title=form_data.get('title'),
+            url=form_data.get('url'),
+            description=form_data.get('description'),
+
+            start_time= \
+                time_s_i(form_data.get('start')),
+            end_time= \
+                time_s_i(form_data.get('end')),
+            
+            reminders=form_data.get('reminders') or [],
+            group_title=group_title)
         
         # Seve Data In Pickle
         current_user.events[0].events = event_manager.return_events_in_pickle
@@ -163,10 +157,12 @@ def edit(id:int):
             
         except IndentationError:
             db.session.rollback()
-            flash('Something went wrong, please try again', category='error')
+            flash('Something went wrong, please try again',
+                category='error')
         
         else:
-            flash('Event edited successfully', category='success')
+            flash('Event edited successfully',
+                category='success')
             redirect(url_for('event.manage'))
     # ----
     

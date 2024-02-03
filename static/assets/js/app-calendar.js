@@ -127,7 +127,32 @@ isRtl && (direction = "rtl"), document.addEventListener("DOMContentLoaded", func
                 p(), B.show(), S && (S.innerHTML = "Add Event"), E.innerHTML = "Add", E.classList.remove("btn-update-event"), E.classList.add("btn-add-event"), k.classList.add("d-none"), q.value = e, D.value = e
             },
             eventClick: function (e) {
-                e = e, (a = e.event).url && (e.jsEvent.preventDefault(), window.open(a.url, "_blank")), B.show(), S && (S.innerHTML = "Update Event"), E.innerHTML = "Update", E.classList.add("btn-update-event"), E.classList.remove("btn-add-event"), k.classList.remove("d-none"), x.value = a.title, d.setDate(a.start, !0, "Y-m-d"), !0 === a.allDay ? Y.checked = !0 : Y.checked = !1, null !== a.end ? o.setDate(a.end, !0, "Y-m-d") : o.setDate(a.start, !0, "Y-m-d"), T.val(a.extendedProps.calendar).trigger("change"), void 0 !== a.extendedProps.location && (A.value = a.extendedProps.location), void 0 !== a.extendedProps.guests && P.val(a.extendedProps.guests).trigger("change"), void 0 !== a.extendedProps.description && (F.value = a.extendedProps.description)
+                e = e,
+                (a = e.event).url && (
+                    e.jsEvent.preventDefault(), 
+                    window.open(a.url, "_blank")), 
+                    B.show(), S && (S.innerHTML = "Update Event"), 
+                    E.innerHTML = "Update",
+                    E.classList.add("btn-update-event"),
+                    E.classList.remove("btn-add-event"),
+                    k.classList.remove("d-none"),
+                    x.value = a.title,
+                    d.setDate(a.start, !0, "Y-m-d"),
+                    
+                    !0 === a.allDay ? Y.checked = !0 : Y.checked = !1,
+                    null !== a.end ? o.setDate(a.end, !0, "Y-m-d") : o.setDate(a.start, !0, "Y-m-d"),
+                    
+                    T.val(a.extendedProps.calendar).trigger("change"),
+                    void 0 !== a.extendedProps.location && (
+                        A.value = a.extendedProps.location),
+
+                    void 0 !== a.extendedProps.guests && P.val(
+                        a.extendedProps.guests).trigger("change"),
+                    
+                    void 0 !== a.extendedProps.description && (
+                        F.value = a.extendedProps.description)
+                console.log(a),
+                k.setAttribute('href', `/event/delete/${a.id}`)
             },
             datesSet: function () {
                 s()

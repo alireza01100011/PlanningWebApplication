@@ -166,16 +166,15 @@ def edit(id:int):
             redirect(url_for('event.manage'))
     # ----
     
-    return render_template('', 
-                    title=' Event ', form=form)
+    redirect(url_for('event.manage'))
 
 
 @blueprint_event.route('/delete/<int:id>', methods=['GET'])
 def remove(id:int):
-    current_user:db_user = current_user
+    user:db_user = current_user
     
     event_manager = EventManager(
-        pickle_data=current_user.event.events)
+        pickle_data=user.events[0].events)
     
     _selected_event:_Event|None = \
         event_manager.events.get(int(id))
@@ -215,16 +214,7 @@ def send_json():
 
     manager_event = EventManager(
         pickle_data=user.events[0].events)
-    manager_event.add_event(
-        'Done Project',
-        'des',
-        time() - 3600,
-        time(),
-        None,
-        reminders=[],
-        url='https://google.com',
-        all_day=True
-    )
+
     response = [
         {
             "id": event.id, 

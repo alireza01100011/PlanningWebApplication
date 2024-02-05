@@ -29,12 +29,11 @@ def add():
     if request.method == 'POST':
         if not form.validate_on_submit():
             flash('Invalid forum', category='error')
-            return render_template('',
-                    title='Create New Group',form=form)
+            return redirect(url_for('group.manage'))
         # ----
 
         group_manager = GroupManager(
-            pickle_data=current_user.groupss)
+            pickle_data=current_user.groups)
         
 
         group_manager.add_group(
@@ -57,8 +56,7 @@ def add():
             redirect(url_for('group.manage'))
     # ----
 
-    return render_template('',
-            title='Create New Group', form=form)
+    return redirect(url_for('group.manage'))
 
 
 

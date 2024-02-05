@@ -6,16 +6,20 @@ from . import group as buleprint_group
 from .forms import GroupForm
 from ..memory_management.group import GroupManager
 
+from utlis.dictionary import COLORs as COLORS
 from app import db
 
+COLORs = COLORS()
 
 @buleprint_group.route('/', methods=['GET'])
 def manage():
     group_manager = GroupManager(
-        pickle_data=current_user.groupss)
+        pickle_data=current_user.groups)
+    form = GroupForm()
 
-    return render_template('', title='Groups',
-                            groups=group_manager.list_groups)
+    return render_template('application/group.html',
+        title='Groups', groups=group_manager.list_groups,
+        form=form, colors_dict=COLORs.colors_bootstrap)
 
 
 @buleprint_group.route('/add', methods=['GET', 'POST'])
@@ -58,8 +62,8 @@ def add():
 
 
 
-@buleprint_group.route('/edit/<int:id>', methods=['GET', 'POST'])
-def edit(id:int):
+@buleprint_group.route('/edit/<string:title>', methods=['GET', 'POST'])
+def edit(title:str):
     form = GroupForm()
     group_manager = GroupManager(
         pickle_data=current_user.groupss)
@@ -107,8 +111,8 @@ def edit(id:int):
     return render_template('', title='Edit Group', form=form)
 
 
-@buleprint_group.route('/remove/<int:id>', methods=['GET'])
-def remove(id:int):
+@buleprint_group.route('/remove/<string:title>', methods=['GET'])
+def remove(title:str):
     group_manager = GroupManager(
         pickle_data=current_user.groupss)
     

@@ -16,7 +16,7 @@ xhr.onload = function () {
         let e = data[key];
         let NewEvent = {
             id: e.id,
-            url: "",
+            url: e.url,
             title: e.title,
             start:  new Date(e.start),
             end: new Date(e.end ),

@@ -74,12 +74,12 @@ def add():
         event_manager.add_event(
             title=form_data.get('title'),
             url=form_data.get('url'),
-            description=form_data.get('description'),
+            description=form_data.get('extendedProps').get('description'),
             start_time= \
                 time_s_i(form_data.get('start')),
             end_time= \
                 time_s_i(form_data.get('end')),
-            reminders=form_data.get('reminders') or [],
+            reminders=form_data.get('extendedProps').get('reminders') or [],
             group=group_title)
         
         # Seve Data In Pickle
@@ -139,16 +139,17 @@ def edit(id:int):
             id=int(id),
             title=form_data.get('title'),
             url=form_data.get('url'),
-            description=form_data.get('description'),
+            description=form_data.get('extendedProps').get('description'),
 
             start_time= \
                 time_s_i(form_data.get('start')),
             end_time= \
                 time_s_i(form_data.get('end')),
             
-            reminders=form_data.get('reminders') or [],
+            reminders=form_data.get('extendedProps').get('reminders') or [],
             group_title=group_title)
-        
+        print(form_data.get('reminders'))
+        print(event_manager.events.get(id).reminders)
         # Seve Data In Pickle
         current_user.events[0].events = event_manager.return_events_in_pickle
 
@@ -163,10 +164,10 @@ def edit(id:int):
         else:
             flash('Event edited successfully',
                 category='success')
-            redirect(url_for('event.manage'))
+            return redirect(url_for('event.manage'))
     # ----
     
-    redirect(url_for('event.manage'))
+    return redirect(url_for('event.manage'))
 
 
 @blueprint_event.route('/delete/<int:id>', methods=['GET'])
@@ -224,7 +225,9 @@ def send_json():
             "end": int(event.end_time) * 1000, 
             "allDay": event.all_day, 
             "extendedProps": { 
-                "calendar": group_manager.groups[event.group_title].title
+                "calendar": group_manager.groups[event.group_title].title,
+                "description" : event.description,
+                "reminders" : event.reminders
             } 
         }
         for event in manager_event.events.values()

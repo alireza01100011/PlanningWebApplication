@@ -89,7 +89,7 @@ class EventManager():
     #  End Function
 
     def update_event(self, id:int,
-                     title:str=None, reminders:list[int]=None,
+                     title:str=None, reminders:list[int|str]=None,
                      description:str=None, start_time:int=None,
                      end_time:int=None, group_title:None=0,
                      url:str=None, all_day:bool=None)-> None | KeyError:

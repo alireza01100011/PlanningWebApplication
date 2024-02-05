@@ -1,4 +1,32 @@
 "use strict";
+
+function Clear_TheValueOfTheSelectTag(selectTag){
+    for (const option of selectTag.options) {
+        if (option.selected) {
+          option.selected = false
+        }
+      }
+};
+
+function Setter_TheValueOfTheSelectTag(selectTag, values){
+    for (const option of selectTag.options) {
+        if (values.indexOf(option.value) !== -1) {
+          option.selected = true
+        }
+      }
+};
+
+function Getter_TheValueOfTheSelectTag(selectTag){
+    const selectedOptions = [];
+
+    for (const option of selectTag.options) {
+      if (option.selected) {
+        selectedOptions.push(option.value);
+      }
+    }
+    return selectedOptions
+};
+
 let direction = "ltr";
 isRtl && (direction = "rtl"), document.addEventListener("DOMContentLoaded", function () {
     {
@@ -18,7 +46,7 @@ isRtl && (direction = "rtl"), document.addEventListener("DOMContentLoaded", func
             M = document.querySelector("#eventURL"),
             T = $("#eventLabel"),
             P = $("#eventGuests"),
-            A = document.querySelector("#eventLocation"),
+            R = document.querySelector("#eventReminder"),
             F = document.querySelector("#eventDescription"),
             Y = document.querySelector(".allDay-switch"),
             C = document.querySelector(".select-all"),
@@ -128,31 +156,37 @@ isRtl && (direction = "rtl"), document.addEventListener("DOMContentLoaded", func
             },
             eventClick: function (e) {
                 e = e,
-                (a = e.event).url && (
-                    e.jsEvent.preventDefault(), 
-                    window.open(a.url, "_blank")), 
-                    B.show(), S && (S.innerHTML = "Update Event"), 
-                    E.innerHTML = "Update",
-                    E.classList.add("btn-update-event"),
-                    E.classList.remove("btn-add-event"),
-                    k.classList.remove("d-none"),
-                    x.value = a.title,
-                    d.setDate(a.start, !0, "Y-m-d"),
-                    
-                    !0 === a.allDay ? Y.checked = !0 : Y.checked = !1,
-                    null !== a.end ? o.setDate(a.end, !0, "Y-m-d") : o.setDate(a.start, !0, "Y-m-d"),
-                    
-                    T.val(a.extendedProps.calendar).trigger("change"),
-                    void 0 !== a.extendedProps.location && (
-                        A.value = a.extendedProps.location),
+                (a = e.event).url && 
+                    (
+                        e.jsEvent.preventDefault()
+                        
+                    ), 
+                B.show(),
+                S && (S.innerHTML = "Update Event"), 
+                E.innerHTML = "Update",
+                E.classList.add("btn-update-event"),
+                E.classList.remove("btn-add-event"),
+                k.classList.remove("d-none"),
+                M.value = a.url,
+                x.value = a.title,
+                Setter_TheValueOfTheSelectTag(R, a.extendedProps.reminders),  
+                
+                d.setDate(a.start, !0, "Y-m-d"),
+                
+                !0 === a.allDay ? Y.checked = !0 : Y.checked = !1,
+                null !== a.end ? o.setDate(a.end, !0, "Y-m-d") : o.setDate(a.start, !0, "Y-m-d"),
+                
+                T.val(a.extendedProps.calendar).trigger("change"),
 
-                    void 0 !== a.extendedProps.guests && P.val(
-                        a.extendedProps.guests).trigger("change"),
-                    
-                    void 0 !== a.extendedProps.description && (
-                        F.value = a.extendedProps.description)
-                console.log(a),
+                void 0 !== a.extendedProps.guests && P.val(
+                    a.extendedProps.guests).trigger("change"),
+                
+                void 0 !== a.extendedProps.description && (
+                    F.value = a.extendedProps.description)
+
+
                 k.setAttribute('href', `/event/delete/${a.id}`)
+
             },
             datesSet: function () {
                 s()
@@ -163,7 +197,9 @@ isRtl && (direction = "rtl"), document.addEventListener("DOMContentLoaded", func
         });
 
         function p() {
-            D.value = "", M.value = "", q.value = "", x.value = "", A.value = "", Y.checked = !1, P.val("").trigger("change"), F.value = ""
+            D.value = "", M.value = "", q.value = "", x.value = "",
+            Y.checked = !1, P.val("").trigger("change"), F.value = "",
+            Clear_TheValueOfTheSelectTag(R)
         }
         i.render(), s(), u = document.getElementById("eventForm"), FormValidation.formValidation(u, {
             fields: {
@@ -209,7 +245,7 @@ isRtl && (direction = "rtl"), document.addEventListener("DOMContentLoaded", func
         }), E.addEventListener("click", e => {
             var t, n;
             E.classList.contains("btn-add-event") ? r && (
-
+                console.log(Getter_TheValueOfTheSelectTag(R)),
                 n = {
                     id: i.getEvents().length + 1,
                     title: x.value,
@@ -217,9 +253,11 @@ isRtl && (direction = "rtl"), document.addEventListener("DOMContentLoaded", func
                     end: D.value,
                     startStr: q.value,
                     endStr: D.value,
+                    url: M.value,
                     display: "block",
                     extendedProps: {
                         calendar: T.val(),
+                        reminders : Getter_TheValueOfTheSelectTag(R),
                         description: F.value
                     }
                 },
@@ -240,8 +278,10 @@ isRtl && (direction = "rtl"), document.addEventListener("DOMContentLoaded", func
                     start: q.value,
                     end: D.value,
                     url: M.value,
+                   
                     extendedProps: {
                         calendar: T.val(),
+                        reminders : Getter_TheValueOfTheSelectTag(R),
                         description: F.value
                         },
                     display: "block",

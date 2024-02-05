@@ -11,7 +11,7 @@ class GroupForm(FlaskForm):
                         validators=(DataRequired(), Length(1, 128)))
     
     description = TextAreaField(description='Add Description',
-                                validators=(Length(1, 2048),))
+                                validators=(Length(0, 128),))
     
     color = SelectField(
         label='Select Group Color',

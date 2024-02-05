@@ -130,16 +130,19 @@ def remove(title:str):
         return redirect(url_for('group.manage'))
     # ----
     
+    # Delete events with this group
     for event in event_manager.list_events:
-        # event = event_manager.events.get(key)
         if event.group_title == title:
             event_manager.delete_event(int(event.id))
     
+    # Delete task with this group
     for task in task_manager.list_tasks:
         if task.group_title == title:
             task_manager.delete_task(int(task.id))
     
+    # Delete Group
     group_manager.delete_group(str(title))
+    # ---
 
     # Save data in the database with (pickled) format
     current_user.groups = \
@@ -150,7 +153,7 @@ def remove(title:str):
     
     current_user.events[0].events = \
         event_manager.return_events_in_pickle
-
+    # --- end Seve
     try:
         db.session.commit()
             

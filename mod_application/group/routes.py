@@ -65,6 +65,14 @@ def add():
 @buleprint_group.route('/edit/<string:title>', methods=['GET', 'POST'])
 def edit(title:str):
     form = GroupForm()
+    user:db_user = current_user
+    
+    event_manager = EventManager(
+        pickle_data=user.events[0].events)
+    
+    task_manager = TasksManager(
+        pickle_data=current_user.tasks[0].tasks)
+    
     group_manager = GroupManager(
         pickle_data=current_user.groups)
     
@@ -94,8 +102,24 @@ def edit(title:str):
             color=form.color.data,
             description=form.description.data)
 
+        # Edit events with this group
+        for event in event_manager.list_events:
+            if event.group_title == title:
+                event.group_title = form.title.data
+
+        # Edit task with this group
+        for task in task_manager.list_tasks:
+            if task.group_title == title:
+                task.group_title = form.title.data
+        
         # Save data in the database with (pickled) format
         current_user.groups = group_manager.return_group_in_pickle
+        
+        current_user.tasks[0].tasks = \
+            task_manager.return_tasks_in_pickle
+        
+        current_user.events[0].events = \
+            event_manager.return_events_in_pickle
         
         try:
             db.session.commit()

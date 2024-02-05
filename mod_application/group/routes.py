@@ -114,14 +114,16 @@ def edit(title:str):
 @buleprint_group.route('/remove/<string:title>', methods=['GET'])
 def remove(title:str):
     group_manager = GroupManager(
-        pickle_data=current_user.groupss)
+        pickle_data=current_user.groups)
+    
     
     # Group Not Found
-    if not group_manager.groups.get(int(id)):
-        return abort(404)
+    if not group_manager.groups.get(str(title)):
+        flash('Not Found Group, 404!', category='error')
+        return redirect(url_for('group.manage'))
     # ----
 
-    group_manager.delete_group(int(id))
+    group_manager.delete_group(str(title))
 
     # Save data in the database with (pickled) format
     current_user.groups = group_manager.return_group_in_pickle
@@ -136,7 +138,7 @@ def remove(title:str):
     else:
         flash('Group delete successfully', category='success')
     
-    redirect(url_for('group.manage'))
+    return redirect(url_for('group.manage'))
 
 
 @buleprint_group.route('/json/get', methods=['GET'])

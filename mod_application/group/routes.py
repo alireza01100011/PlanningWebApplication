@@ -64,12 +64,12 @@ def add():
 def edit(title:str):
     form = GroupForm()
     group_manager = GroupManager(
-        pickle_data=current_user.groupss)
+        pickle_data=current_user.groups)
     
-    _selected_group = group_manager.groups.get(int(id))
+    _selected_group = group_manager.groups.get(str(title))
 
     # Group Not Found
-    if not  _selected_group :
+    if not _selected_group :
         return abort(404)
     # ----
 
@@ -82,11 +82,12 @@ def edit(title:str):
     if request.method == 'POST':
         if not form.validate_on_submit():
             flash('Invalid forum', category='error')
-            return render_template('', title='Edit Group', form=form)
+            return render_template('application/form-edit-group.html', 
+            title='Edit Group', form=form)
         # ----
 
         group_manager.update_group(
-            id=int(id),
+            target_title=title,
             title=form.title.data,
             color=form.color.data,
             description=form.description.data)
@@ -100,14 +101,13 @@ def edit(title:str):
         except IndentationError:
             db.session.rollback()
             flash('Something went wrong, please try again', category='error')
-        
+
         else:
             flash('Group edited successfully', category='success')
-            redirect(url_for('group.manage'))
+            return redirect(url_for('group.manage'))
     # ----
-    
-    return render_template('', title='Edit Group', form=form)
-
+    return render_template('application/form-edit-group.html', 
+        title='Edit Group', form=form)
 
 @buleprint_group.route('/remove/<string:title>', methods=['GET'])
 def remove(title:str):

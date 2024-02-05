@@ -5,6 +5,8 @@ from sqlalchemy.exc import IntegrityError
 from . import group as buleprint_group
 from .forms import GroupForm
 from ..memory_management.group import GroupManager
+from ..memory_management.event import EventManager
+from ..memory_management.task import TasksManager
 
 from utlis.dictionary import COLORs as COLORS
 from app import db
@@ -111,20 +113,43 @@ def edit(title:str):
 
 @buleprint_group.route('/remove/<string:title>', methods=['GET'])
 def remove(title:str):
+    user:db_user = current_user
+    
+    event_manager = EventManager(
+        pickle_data=user.events[0].events)
+    
+    task_manager = TasksManager(
+        pickle_data=current_user.tasks[0].tasks)
+    
     group_manager = GroupManager(
         pickle_data=current_user.groups)
-    
     
     # Group Not Found
     if not group_manager.groups.get(str(title)):
         flash('Not Found Group, 404!', category='error')
         return redirect(url_for('group.manage'))
     # ----
-
+    
+    for event in event_manager.list_events:
+        # event = event_manager.events.get(key)
+        if event.group_title == title:
+            event_manager.delete_event(int(event.id))
+    
+    for task in task_manager.list_tasks:
+        if task.group_title == title:
+            task_manager.delete_task(int(task.id))
+    
     group_manager.delete_group(str(title))
 
     # Save data in the database with (pickled) format
-    current_user.groups = group_manager.return_group_in_pickle
+    current_user.groups = \
+        group_manager.return_group_in_pickle
+
+    current_user.tasks[0].tasks = \
+        task_manager.return_tasks_in_pickle
+    
+    current_user.events[0].events = \
+        event_manager.return_events_in_pickle
 
     try:
         db.session.commit()

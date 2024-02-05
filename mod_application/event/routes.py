@@ -225,11 +225,16 @@ def send_json():
             "end": int(event.end_time) * 1000, 
             "allDay": event.all_day, 
             "extendedProps": { 
-                "calendar": group_manager.groups[event.group_title].title,
+                "calendar": 
+                    group_manager.groups.get(event.group_title).title
+                        if group_manager.groups.get(event.group_title)
+                        else '',
                 "description" : event.description,
                 "reminders" : event.reminders
             } 
         }
         for event in manager_event.events.values()
+
+
     ]
     return jsonify(response)

@@ -80,6 +80,7 @@ def add():
             group=group_title)
         
         # Seve Data In Pickle
+        user.total_event = int(user.total_event) + 1
         user.events[0].events = event_manager.return_events_in_pickle
 
         try:

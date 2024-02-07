@@ -90,7 +90,6 @@ def add():
         if group_manager.groups.get(form.group.data):
             _group = form.group.data
 
-        print(Time_SI("2024-10-12 15:00"))
 
         task_manager.add_task(
             name=form.title.data,
@@ -98,6 +97,7 @@ def add():
             description=form.description.data,
             group_title=_group)
         
+        current_user.total_task = int(current_user.total_task) + 1
         user.tasks[0].tasks = task_manager.return_tasks_in_pickle
 
         try:
@@ -230,6 +230,9 @@ def switching(id):
 
     task_manager.done_task(id)
 
+    if task_manager.tasks.get(id).done:
+        current_user.total_task_done = current_user.total_task_done + 1
+    
     current_user.tasks[0].tasks = task_manager.return_tasks_in_pickle
 
     try:

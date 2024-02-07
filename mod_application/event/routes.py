@@ -9,7 +9,6 @@ from .models import Event as db_event
 from ..memory_management.event import EventManager, _Event
 from ..memory_management.group import GroupManager
 
-from utlis.flask_login import login_required
 from utlis.time_convert import string_to_int as time_s_i
 
 sys.path.append("../..")
@@ -19,7 +18,6 @@ from app import db
 
 
 @blueprint_event.route('/', methods=['GET', 'POST'])
-@login_required(_next_endpoint='event.manage')
 def manage():
     
     user:db_user = db_user.query.get(current_user.id)
@@ -43,7 +41,6 @@ def manage():
 
 
 @blueprint_event.route('/add', methods=['GET', 'POST'])
-@login_required()
 def add():
 
     if request.method == 'GET':
@@ -205,7 +202,6 @@ def remove(id:int):
     
 
 @blueprint_event.route('/json/get', methods=['GET'])
-@login_required()
 def send_json():
     from time import time
     user:db_user = db_user.query.get(current_user.id)

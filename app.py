@@ -1,4 +1,4 @@
-from flask import Flask
+from flask import Flask, render_template
 from flask_sqlalchemy import SQLAlchemy
 from flask_migrate import Migrate
 from flask_login import LoginManager
@@ -28,28 +28,19 @@ app.register_blueprint(group)
 app.register_blueprint(task)
 app.register_blueprint(event)
 
+
 from utlis.time_convert import epoch_to_datetime as EpochToDatetime
+from utlis.flask_login import login_required
+
 @app.template_global()
 def epoch_to_datetime(epochTime, format='%Y-%m-%d', _division:int=1):
     return EpochToDatetime(int(epochTime)/ _division, format)
 
 
-from flask import request
-
-
 @app.route('/')
+@login_required(_next_url='/')
 def index():
-    ''' For Dev [Test Tepmlate] '''
-    from flask import render_template
     return render_template('application/home.html', title='Home')
 
-from json import dumps
-@app.route('/test-form', methods=['POST'])
-def test_form():
-    if request.method == 'POST':
-        form = request.get_json()
-        print(form)
-        return 'post'
-    return 'get'
 
 

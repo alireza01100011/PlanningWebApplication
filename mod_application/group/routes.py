@@ -8,14 +8,12 @@ from ..memory_management.group import GroupManager
 from ..memory_management.event import EventManager
 from ..memory_management.task import TasksManager
 
-from utlis.flask_login import login_required
 from utlis.dictionary import COLORs as COLORS
 from app import db
 
 COLORs = COLORS()
 
 @buleprint_group.route('/', methods=['GET'])
-@login_required(_next_endpoint='group.manage')
 def manage():
     group_manager = GroupManager(
         pickle_data=current_user.groups)

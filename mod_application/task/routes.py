@@ -12,7 +12,6 @@ from .forms import TaskForm
 from ..memory_management.task import TasksManager, _Task
 from ..memory_management.group import GroupManager, _Group
 
-from utlis.flask_login import login_required
 from utlis.time_convert import string_to_int as Time_SI
 from utlis.time_convert import epoch_to_datetime
 
@@ -23,7 +22,6 @@ from app import db
 
 
 @buleprint_task.route('/')
-@login_required(_next_endpoint='task.manage')
 def manage():
     filter_group = request.args.get('group', default='all', type=str)
     user:db_user = db_user.query.get(current_user.id)

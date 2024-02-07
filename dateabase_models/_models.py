@@ -19,6 +19,10 @@ class User(db.Model, UserMixin):
     tasks = db.relationship('Task', backref='user')
     events = db.relationship('Event', backref='user')
 
+    total_task = Column(Integer, default=0)
+    total_task_done = Column(Integer, default=0)
+    total_event = Column(Integer, default=0)
+
     def __init__(self, full_name:str, email:str, password:str,
                  roll:int=0) -> None:
         

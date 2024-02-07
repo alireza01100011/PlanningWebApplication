@@ -145,8 +145,7 @@ def edit(id:int):
             
             reminders=form_data.get('extendedProps').get('reminders') or [],
             group_title=group_title)
-        print(form_data.get('reminders'))
-        print(event_manager.events.get(id).reminders)
+
         # Seve Data In Pickle
         current_user.events[0].events = event_manager.return_events_in_pickle
 

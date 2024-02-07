@@ -21,10 +21,15 @@ from dateabase_models._models import Event, Task
 @login_required(_next_url='/profile/')
 def profile():
 
-    return render_template('user/profile.html',
-    title='Profile', 
-    task_total='1258', task_done_total='180',
-    event_total='180', event_done_total='175')
+    user:User = current_user
+    task_total, task_done_total = user.total_task, user.total_task_done
+    event_total, event_done_total = user.total_event, user.total_event
+
+    return render_template(
+        'user/profile.html', title='Profile', 
+        task_total=task_total, task_done_total=task_done_total,
+        event_total=event_total, event_done_total=event_total
+        )
 
 
 @user.route('login/', methods=['GET', 'POST'])
@@ -157,6 +162,19 @@ def settings():
 
     return render_template('user/settings.html', title='Setting Account',
                            form=form, submit_button='Update')
+
+
+@user.route('/delete', methods=['GET'])
+def delete():
+    user:User = User.query.get(2)
+    
+    for event in user.events : db.session.delete(event)
+    for task in user.tasks : db.session.delete(task)
+
+    db.session.delete(user)
+    db.session.commit()
+
+    return redirect(url_for('user.profile'))
 
 
 

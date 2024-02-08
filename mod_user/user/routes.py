@@ -5,10 +5,11 @@ from flask_login import login_user, logout_user, current_user
 from sqlalchemy.exc import IntegrityError
 
 from . import user
-from .models import User
+from .models import User, NotUserAuthenticated
 from .forms import LoginForm, RegisterForm, SettingForm
+from .utlis import add_to_redis, get_from_redis, delete_from_redis, send_registration_message
 
-from app import db, bcrypt
+from app import db, bcrypt, Configs
 
 from utlis.flask_login import not_logged_in, login_required
 from mod_application.memory_management.group import GroupManager
@@ -18,9 +19,8 @@ from mod_application.memory_management.event import EventManager
 from dateabase_models._models import Event, Task
 
 @user.route('/', methods=['GET'])
-@login_required(_next_url='/profile/')
+@login_required('user.profile')
 def profile():
-
     user:User = current_user
     task_total, task_done_total = user.total_task, user.total_task_done
     event_total, event_done_total = user.total_event, user.total_event
@@ -45,6 +45,12 @@ def login():
             flash("Something went wrong. Please try again")
             return render_template('user/forms-A.html', title='Login', form=form)
         
+        user_not_auth = NotUserAuthenticated.query.filter(
+                NotUserAuthenticated.user_id.like(user.id)).first()
+
+        if user_not_auth:
+            return redirect(url_for(''))
+
         login_user(user, remember=form.remember.data)
         flash('You have successfully logged in' , 'info')
         __next = request.args.get('next', type=str,
@@ -84,10 +90,18 @@ def register():
         NewTask.user = NewUser
         NewEvent.user = NewUser
 
+
+        
         try:
             db.session.add_all([NewEvent, NewTask, NewUser])
             db.session.commit()
+            
+            # Add new user to unauthenticated users
+            db.session.add(NotUserAuthenticated(NewUser.id))
+            db.session.commit()
 
+            token = add_to_redis(NewUser, 'register')
+            send_registration_message(NewUser, token)
         except IntegrityError:
             db.session.rollback()
             flash('Error! Try again (probably because the email you entered already exists)')
@@ -165,8 +179,9 @@ def settings():
 
 
 @user.route('/delete', methods=['GET'])
+@login_required('user.profile')
 def delete():
-    user:User = User.query.get(2)
+    user:User = User.query.get(current_user.id)
     
     for event in user.events : db.session.delete(event)
     for task in user.tasks : db.session.delete(task)
@@ -174,11 +189,55 @@ def delete():
     db.session.delete(user)
     db.session.commit()
 
+    return redirect(url_for('user.login'))
+
+
+
+@user.route('/confirm/')
+def confirm_registration():
+    email = request.args.get(key='email', type=str)
+    token = request.args.get(key='token', type=str)
+
+    if (not email) or (not token):
+        return render_template('user/email-confirmation-required.html',
+        msg=f"""Account activation link sent to your email address: 
+                {Configs.MAIL_USERNAME} 
+                Please follow the link inside to continue.""")
+    
+    user:User = User.query.filter(
+        User.email.ilike(email)).first()
+    
+    if not user:
+        return render_template(
+            'user/email-confirmation-required.html',
+            msg=f"This account does not exist! Email : {email}")
+    
+    user_auth = NotUserAuthenticated.query.filter(
+        NotUserAuthenticated.user_id.like(user.id)).first()
+    
+    if not user_auth:
+        return render_template(
+            'user/email-confirmation-required.html',
+            msg='This user is already activated.')
+    
+    token_from_redis = get_from_redis(user, 'register')
+    print(token_from_redis)
+    print(token)
+
+    if (not token_from_redis) or \
+        (str(token) != token_from_redis.decode('UTF-8')):
+        return render_template(
+            'user/email-confirmation-required.html',
+            msg='The token has expired!')
+
+    delete_from_redis(user, 'register')
+    db.session.delete(user_auth)
+    db.session.commit()
+
+    flash('Your email has been successfully verified! welcome')
     return redirect(url_for('user.profile'))
-
-
-
-
+    
+    
 
 
 

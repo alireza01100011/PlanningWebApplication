@@ -205,9 +205,10 @@ def confirm_registration():
     token = request.args.get(key='token', type=str)
 
     if resend :
+        if token:
+            return redirect(url_for('user.confirm_registration', token=token))
         flash('The authentication email has been re-sent to your email address')
-        token = None
-    
+
     if (not token):
         token = add_to_redis(current_user, 'register')
         send_registration_message(current_user, token)
@@ -225,17 +226,15 @@ def confirm_registration():
     if not user_auth:
         return render_template(
             'user/email-confirmation-required.html',
-            msg='This user is already activated.')
+            msg=f"This user is already activated. <br> <a href='{url_for('user.profile')}'>Profile</a>")
     
     token_from_redis = get_from_redis(current_user, 'register')
-    print(token_from_redis)
-    print(token)
 
     if (not token_from_redis) or \
         (str(token) != token_from_redis.decode('UTF-8')):
         return render_template(
             'user/email-confirmation-required.html',
-            msg='The token has expired!')
+            msg=f"The token has expired!")
 
     delete_from_redis(current_user, 'register')
     db.session.delete(user_auth)

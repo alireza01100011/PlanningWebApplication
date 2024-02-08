@@ -45,13 +45,15 @@ def login():
             flash("Something went wrong. Please try again")
             return render_template('user/forms-A.html', title='Login', form=form)
         
+        login_user(user, remember=form.remember.data)
+
         user_not_auth = NotUserAuthenticated.query.filter(
                 NotUserAuthenticated.user_id.like(user.id)).first()
-
+                
         if user_not_auth:
-            return redirect(url_for(''))
+            return redirect(url_for('user.confirm_registration'))
 
-        login_user(user, remember=form.remember.data)
+        
         flash('You have successfully logged in' , 'info')
         __next = request.args.get('next', type=str,
                                   default=url_for('user.profile'))
@@ -100,8 +102,6 @@ def register():
             db.session.add(NotUserAuthenticated(NewUser.id))
             db.session.commit()
 
-            token = add_to_redis(NewUser, 'register')
-            send_registration_message(NewUser, token)
         except IntegrityError:
             db.session.rollback()
             flash('Error! Try again (probably because the email you entered already exists)')
@@ -132,7 +132,8 @@ def logout():
 @login_required(_next_endpoint='user.settings')
 def settings():
     form  = SettingForm()
-    user = current_user
+    user:User = current_user
+
     if request.method == 'GET':
         form.email.data = user.email
         form.full_name.data = user.full_name
@@ -159,10 +160,12 @@ def settings():
         if _password_must_be_correct :
             user.password = bcrypt.generate_password_hash(form.password.data)
     
-        if not form.email.data == user.email:
+        if form.email.data != user.email:
             # Remaining: Email confirmation must be added
             user.email = form.email.data
-
+            # Add new user to unauthenticated users
+            db.session.add(NotUserAuthenticated(user.id))
+        
         try:
             db.session.commit()
         except IntegrityError:
@@ -194,33 +197,37 @@ def delete():
 
 
 @user.route('/confirm/')
+@login_required('user.confirm_registration')
 def confirm_registration():
-    email = request.args.get(key='email', type=str)
+    
+    email = current_user.email
+    resend = request.args.get(key='resend')
     token = request.args.get(key='token', type=str)
 
-    if (not email) or (not token):
+    if resend :
+        flash('The authentication email has been re-sent to your email address')
+        token = None
+    
+    if (not token):
+        token = add_to_redis(current_user, 'register')
+        send_registration_message(current_user, token)
+        
         return render_template('user/email-confirmation-required.html',
         msg=f"""Account activation link sent to your email address: 
                 {Configs.MAIL_USERNAME} 
                 Please follow the link inside to continue.""")
     
-    user:User = User.query.filter(
-        User.email.ilike(email)).first()
-    
-    if not user:
-        return render_template(
-            'user/email-confirmation-required.html',
-            msg=f"This account does not exist! Email : {email}")
+
     
     user_auth = NotUserAuthenticated.query.filter(
-        NotUserAuthenticated.user_id.like(user.id)).first()
+        NotUserAuthenticated.user_id.like(current_user.id)).first()
     
     if not user_auth:
         return render_template(
             'user/email-confirmation-required.html',
             msg='This user is already activated.')
     
-    token_from_redis = get_from_redis(user, 'register')
+    token_from_redis = get_from_redis(current_user, 'register')
     print(token_from_redis)
     print(token)
 
@@ -230,7 +237,7 @@ def confirm_registration():
             'user/email-confirmation-required.html',
             msg='The token has expired!')
 
-    delete_from_redis(user, 'register')
+    delete_from_redis(current_user, 'register')
     db.session.delete(user_auth)
     db.session.commit()
 

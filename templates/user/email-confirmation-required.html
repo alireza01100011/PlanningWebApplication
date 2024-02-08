@@ -332,17 +332,6 @@
     <link rel="stylesheet" type="text/css" href="/static/assets/vendor/css/rtl/theme-default-dark.css"
         class="template-customizer-theme-css">
 
-    <!-- Global site tag (gtag.js) - Google Analytics -->
-    <script async="async" src="https://www.googletagmanager.com/gtag/js?id=GA_MEASUREMENT_ID"></script>
-    <script>
-        window.dataLayer = window.dataLayer || [];
-
-        function gtag() {
-            dataLayer.push(arguments);
-        }
-        gtag('js', new Date());
-        gtag('config', 'GA_MEASUREMENT_ID');
-    </script>
     <!-- Custom notification for demo -->
     <!-- beautify ignore:end -->
 
@@ -378,7 +367,7 @@
                     </p>
 
                     <p class="text-center">Didn't get the mail?
-                        <a href="#">
+                        <a href="{{url_for('user.confirm_registration', resend=True)}}">
                             Resend
                         </a>
                     </p>

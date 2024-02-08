@@ -58,6 +58,18 @@ class Event(db.Model):
         self.events:bytes = events
 
     def __rapr__(self):
-        return f'{self.__class__.__name__} < id:{self.id} - user_id{self.user_id} > '
+        return f'{self.__class__.__name__} < id:{self.id} - user_id{self.user_id} >'
+
+class NotUserAuthenticated(db.Model):
+    __tablename__ = 'not_user_authenticated'
+    id = Column(Integer, primary_key=True)
+    user_id = Column(Integer, unique=True, nullable=False)
+
+    def __init__(self, user_id:int)->None:
+        self.user_id:int = user_id
+    
+    def __rapr__(self):
+        return f'{self.__class__.__name__} <ID:{self.id} - USER-ID:{self.user_id}>'
+
 
 

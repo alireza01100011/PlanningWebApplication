@@ -1,7 +1,10 @@
+# Flask libs
 from flask import render_template, request, abort, flash, redirect, url_for, jsonify
 from flask_login import current_user
 from sqlalchemy.exc import IntegrityError
+# - Flask libs
 
+# Local libs
 from . import group as buleprint_group
 from .forms import GroupForm
 from ..memory_management.group import GroupManager
@@ -10,6 +13,7 @@ from ..memory_management.task import TasksManager
 
 from utlis.dictionary import COLORs as COLORS
 from app import db
+# - Local libs
 
 COLORs = COLORS()
 
@@ -20,8 +24,9 @@ def manage():
     form = GroupForm()
 
     return render_template('application/group.html',
-        title='Groups', groups=group_manager.list_groups,
-        form=form, colors_dict=COLORs.colors_bootstrap)
+        title='Groups', form=form,
+        groups=group_manager.list_groups,
+        colors_dict=COLORs.colors_bootstrap)
 
 
 @buleprint_group.route('/add', methods=['GET', 'POST'])
@@ -57,10 +62,8 @@ def add():
             flash('New group successfully created', category='success')
             redirect(url_for('group.manage'))
     # ----
-
     return redirect(url_for('group.manage'))
-
-
+# End Function
 
 @buleprint_group.route('/edit/<string:title>', methods=['GET', 'POST'])
 def edit(title:str):
@@ -133,7 +136,8 @@ def edit(title:str):
             return redirect(url_for('group.manage'))
     # ----
     return render_template('application/form-edit-group.html', 
-        title='Edit Group', form=form)
+                            title='Edit Group', form=form)
+# End Function
 
 @buleprint_group.route('/remove/<string:title>', methods=['GET'])
 def remove(title:str):
@@ -158,12 +162,14 @@ def remove(title:str):
     for event in event_manager.list_events:
         if event.group_title == title:
             event_manager.delete_event(int(event.id))
-    
+    # ---
+
     # Delete task with this group
     for task in task_manager.list_tasks:
         if task.group_title == title:
             task_manager.delete_task(int(task.id))
-    
+    # ---
+
     # Delete Group
     group_manager.delete_group(str(title))
     # ---
@@ -177,7 +183,8 @@ def remove(title:str):
     
     current_user.events[0].events = \
         event_manager.return_events_in_pickle
-    # --- end Seve
+    # --- (End Seve)
+    
     try:
         db.session.commit()
             
@@ -189,7 +196,7 @@ def remove(title:str):
         flash('Group delete successfully', category='success')
     
     return redirect(url_for('group.manage'))
-
+# End Function
 
 @buleprint_group.route('/json/get', methods=['GET'])
 def send_json():

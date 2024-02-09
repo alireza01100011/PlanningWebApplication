@@ -16,15 +16,7 @@ class TaskForm(FlaskForm):
 
     deadline = DateField(description='Deadline Time',
             format='%Y-%m-%d', validators=(DataRequired(),))
-    
-    #  [(1, 5)]+[(, reminder_t) for reminder_t in range(15, 61, 15)]
-    # def _list_choices()->list[tuple[int, int]]:
-    #     count, choices = 2, [2, '5']
-    #     for reminder_t in range(15, 61, 15):
-    #         count += 1
-    #         choices.append((count, f'{reminder_t}'))
-    #     return choices
-    # reminder = MultiCheckboxField(label='Reminder', description='Reminder Before The Event') 
 
     def get_fields(self):
         return _get_fields(self)
+# ---

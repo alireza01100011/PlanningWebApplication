@@ -1,10 +1,15 @@
+# Standard libs
 import sys
 from datetime import datetime
+# ---
 
+# Flask libs
 from flask import render_template, abort, request, flash, redirect, url_for
 from flask_login import current_user
 from sqlalchemy.exc import IntegrityError
+# ---
 
+# local libs
 from . import task as buleprint_task
 from .models import Task as db_task
 from .forms import TaskForm
@@ -19,16 +24,19 @@ sys.path.append("../..")
 from mod_user.user.models import User as db_user
 
 from app import db
-
+# ---
 
 @buleprint_task.route('/')
 def manage():
-    filter_group = request.args.get('group', default='all', type=str)
+    filter_group = request.args.get(
+        'group', default='all', type=str)
+    
     user:db_user = db_user.query.get(current_user.id)
 
+    # Get Datas
     task_manager = TasksManager(
         pickle_data=user.tasks[0].tasks)
-
+    
     group_manager = GroupManager(
         pickle_data=user.groups)
 
@@ -38,27 +46,26 @@ def manage():
     if filter_group.lower() == 'all':
         tasks = task_manager.list_tasks
     else :
-        tasks = [
-        tk 
+        tasks = [tk 
         for tk in task_manager.list_tasks
         if tk.group_title == filter]
+    # ---
 
-
+    # Create Form
     form = TaskForm()
-    form.group.choices = [
-        (group.title, group.title)
+    form.group.choices = [(group.title, group.title)
         for group in groups]
-    
-    
+    # ---
+
+    # Add Group (ALL)
     groups.insert(0, _Group('All', 'All Group', ''))
+    # ---
 
     return render_template('application/to-do.html',
-        title='To Do', form=form,
+        title='To Do', form=form, groups=groups,
         tasks=task_manager.list_tasks,
-        groups=groups,
-        _filter_group=filter_group ) # tasks=task_manager.list_tasks
-
-
+        _filter_group=filter_group)
+# End Function
 
 @buleprint_task.route('/add', methods=['POST'])
 def add():
@@ -68,19 +75,20 @@ def add():
     group_manager = GroupManager(
         pickle_data=user.groups)
     
-    form.group.choices = [
-        (group.title, group.title)
+    form.group.choices = [(group.title, group.title)
         for group in group_manager.list_groups]
+    
     if request.method == 'GET':
         return redirect(url_for('task.manage'))
-        
+    # ---
+    
     if request.method == 'POST':
         if not form.validate_on_submit():
             flash('The form is invalid', category='error')
             return f'Eror'
             return render_template('application/to-do.html', 
                                     title='To Do', form=form)
-        
+        # ---        
         
         task_manager = TasksManager(
             pickle_data=user.tasks[0].tasks)
@@ -89,14 +97,16 @@ def add():
         # Does this group exist? If not, select the default group
         if group_manager.groups.get(form.group.data):
             _group = form.group.data
-
+        # ---
 
         task_manager.add_task(
-            name=form.title.data,
-            time_start=Time_SI(str(form.deadline.data), format='%Y-%m-%d'),
             description=form.description.data,
-            group_title=_group)
-        
+            name=form.title.data,
+            group_title=_group,
+            time_start=Time_SI(
+                str(form.deadline.data), format='%Y-%m-%d'))
+        # ---
+    
         current_user.total_task = int(current_user.total_task) + 1
         user.tasks[0].tasks = task_manager.return_tasks_in_pickle
 
@@ -110,9 +120,7 @@ def add():
         else:
             flash('task added successfully', category='success')
             return redirect(url_for('task.manage'))
-     
-
-
+# End Function 
 
 @buleprint_task.route('/edit/<int:id>', methods=['GET', 'POST'])
 def edit(id:int):
@@ -136,6 +144,7 @@ def edit(id:int):
         (group.title, group.title)
         for group in group_manager.list_groups]
 
+    # Filling the form fields
     if request.method == 'GET':
         form.title.data = _selected_task.name
         form.group.data = _selected_task.group_title
@@ -145,18 +154,19 @@ def edit(id:int):
             int(_selected_task.time_start),
             format='%Y-%m-d'),
             '%Y-%m-d')
-
+    # ---
 
     if request.method == 'POST':
         if not form.validate_on_submit():
             flash('The form is invalid', category='error')
             return render_template('application/to-do.html', 
                                     title='To Do', form=form)
-        
+        # ---
+
         # Does this group exist? If not, select the default group
         if group_manager.groups.get(form.group.data):
             _group = form.group.data
-
+        # ---
 
         task_manager.update_task(
             id = int(id),
@@ -164,7 +174,8 @@ def edit(id:int):
             time_start= Time_SI(str(form.deadline.data), format='%Y-%m-%d'),
             description=form.description.data,
             group_title = _group)
-        
+        # ---
+
         current_user.tasks[0].tasks = task_manager.return_tasks_in_pickle
 
         try:
@@ -180,7 +191,7 @@ def edit(id:int):
             
     return render_template('application/form-edit-task.html', 
                         title='To Do', form=form)
-
+# End Function
 
 @buleprint_task.route('remove/<int:id>')
 def remove(id:int):
@@ -212,7 +223,7 @@ def remove(id:int):
         redirect(url_for('task.manage'))
 
     return redirect(url_for('task.manage'))
-
+# End Function
 
 @buleprint_task.route('switching/<int:id>')
 def switching(id):

@@ -1,40 +1,73 @@
-from random import randint
+# Standard libs
 import smtplib
+from random import randint
 from email.message import EmailMessage
-from flask import url_for
-from app import redis, mail, Configs
 
+# Flask libs
+from flask import url_for
+
+# local vars
+from app import redis, mail, Configs
 from .models import User
 
-def add_to_redis(user:User, mode:str)->int:
+
+def add_to_redis(user:User, mode:str)-> int:
+    """
+    Adds a new record to Redis 
+    'For authentication'
+
+    user -> User
+    mode -> [register, reset_passw, ...]
+    """
     token = randint(100_000, 999_999)
-    name = f'{user.id}_{mode.lower()}'
     redis.set(
-        name=name, value=token, ex=14400)
-    
+        name=f'{user.id}_{mode.lower()}',
+        value=token, ex=14400)
+
     return token
+# End Function
 
+def get_from_redis(user:User, mode:str)-> bytes:
+    """
+    Receive token from Redis
+    'For authentication'
 
-def get_from_redis(user:User, mode:str)->int|str:
+    user -> User
+    mode -> [register, reset_passw, ...]
+    """
     name = f'{user.id}_{mode.lower()}'
     return redis.get(name=name)
+# End Function
 
 def delete_from_redis(user:User, mode:str)->None:
+    """
+    delete record from Redis
+    'For authentication'
+
+    user -> User
+    mode -> [register, reset_passw, ...]
+    """
     name = f'{user.id}_{mode.lower()}'
     redis.delete(name)
+# End Function
 
-def send_registration_message(user:User, token:int):
+def send_registration_message(user:User, token:int)-> None:
+    """
+    Send email confirmation email
+    'For authentication'
+
+    user -> User
+    toke -> int[123456]
+    """
+    url_email_confirm = url_for('user.confirm_registration', 
+                token=token,_external=True)
+    
     msg  = EmailMessage()
     msg['Subject'] = 'Welcoome - Your email verification code'
     msg['From'] = Configs.MAIL_USERNAME
     msg['To'] = user.email
     msg.set_content(
-        f"""Your email verification code : {
-            url_for(
-                'user.confirm_registration', 
-                email=user.email, token=token,
-                _external=True
-                )}""")
+        f"""Open this link to verify your email : {url_email_confirm}""")
     
     with smtplib.SMTP_SSL(
         host=Configs.MAIL_SERVER, port=Configs.MAIL_PORT) as server:
@@ -43,4 +76,4 @@ def send_registration_message(user:User, token:int):
                             Configs.MAIL_PASSWORD)
         
         server.send_message(msg)
-
+# End Function

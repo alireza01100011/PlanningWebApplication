@@ -8,6 +8,7 @@ from app import db, login_manager
 def load_user(user_id):
     return User.query.get(user_id)
 
+
 class User(db.Model, UserMixin):
     __tablename__ = 'users'
     id = Column(Integer, unique=True, primary_key=True)
@@ -33,7 +34,7 @@ class User(db.Model, UserMixin):
 
     def __repr__(self):
         return f'{self.__class__.__name__}< id:{self.id} - email:{self.email} - roll:{self.roll}>'
-    
+# End
 
 class Task(db.Model):
     __tablename__ = 'tasks'
@@ -46,7 +47,7 @@ class Task(db.Model):
     
     def __repr__(self):
         return f'{self.__class__.__name__}< id:{self.id} - user_id:{self.user_id} >'
-    
+# End
 
 class Event(db.Model):
     __tablename__ = 'events'
@@ -59,6 +60,7 @@ class Event(db.Model):
 
     def __rapr__(self):
         return f'{self.__class__.__name__} < id:{self.id} - user_id{self.user_id} >'
+# End
 
 class NotUserAuthenticated(db.Model):
     __tablename__ = 'not_user_authenticated'
@@ -70,6 +72,6 @@ class NotUserAuthenticated(db.Model):
     
     def __rapr__(self):
         return f'{self.__class__.__name__} <ID:{self.id} - USER-ID:{self.user_id}>'
-
+# End
 
 

@@ -1,11 +1,19 @@
+# Standard libs
 import sys
-from flask import render_template, request, abort, flash, redirect, url_for, jsonify
+# - Standard libs
+
+# Flask libs
+from flask import (render_template, request, abort,
+                    flash, redirect, url_for, jsonify)
 from flask_login import current_user
 from sqlalchemy.exc import IntegrityError
+# - Flask libs
 
+# Local libs
 from . import event as blueprint_event
 from .forms import validate_event_form, EventForm
 from .models import Event as db_event
+
 from ..memory_management.event import EventManager, _Event
 from ..memory_management.group import GroupManager
 
@@ -15,7 +23,7 @@ sys.path.append("../..")
 from mod_user.user.models import User as db_user
 
 from app import db
-
+# - Local libs
 
 @blueprint_event.route('/', methods=['GET', 'POST'])
 def manage():

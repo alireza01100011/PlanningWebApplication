@@ -24,3 +24,4 @@ class GroupForm(FlaskForm):
     
     def get_fields(self):
         return _get_fields(self)
+# End

@@ -4,6 +4,7 @@ from flask_wtf import FlaskForm
 from wtforms.fields import (StringField, PasswordField, BooleanField)
 from wtforms.validators import (DataRequired, Email, EqualTo,
                                  Length, ValidationError)
+
 from wtforms.widgets import PasswordInput
 from utlis.forms import _get_fields
 
@@ -26,7 +27,7 @@ class LoginForm(FlaskForm):
     
     def get_fields(self):
         return _get_fields(self)
-
+# End
 
 class RegisterForm(FlaskForm):
     full_name = StringField('Enter Your Full Name : ',
@@ -48,8 +49,7 @@ class RegisterForm(FlaskForm):
     
     def get_fields(self):
         return _get_fields(self)
-
-
+# End
 
 class SettingForm(FlaskForm):
     full_name = StringField('Your Full Name : ',
@@ -68,18 +68,5 @@ class SettingForm(FlaskForm):
     confirm_password = StringField( name='Confirm Your New Password :',
                         validators=(DataRequired(), Length(8,128), EqualTo('password')),
                         widget=PasswordInput(hide_value=False))
-
-    # def validate_old_password(old_password):
-    #     if old_password.data == '*'*8:
-    #         raise ValidationError('The password must not be (********).')
-    
-    # def validate_password(password):
-    #     if password.data == '*'*8:
-    #         raise ValidationError('The password must not be (********).')
-    
-    # def validate_confirm_password(confirm_password):
-    #     if confirm_password.data == '*'*8:
-    #         raise ValidationError('The password must not be (********).')
-    
-    
+# End    
     

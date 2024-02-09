@@ -1,9 +1,11 @@
-from flask import ( flash, url_for, redirect,
+# Flask libs
+from flask import (flash, url_for, redirect,
                     render_template, abort, request)
 from flask_login import login_user, logout_user, current_user
-
 from sqlalchemy.exc import IntegrityError
+# ---
 
+# Local libs
 from . import user
 from .models import User, NotUserAuthenticated
 from .forms import LoginForm, RegisterForm, SettingForm
@@ -17,6 +19,7 @@ from mod_application.memory_management.task import TasksManager
 from mod_application.memory_management.event import EventManager
 
 from dateabase_models._models import Event, Task
+# ---
 
 @user.route('/', methods=['GET'])
 @login_required('user.profile')
@@ -28,9 +31,8 @@ def profile():
     return render_template(
         'user/profile.html', title='Profile', 
         task_total=task_total, task_done_total=task_done_total,
-        event_total=event_total, event_done_total=event_total
-        )
-
+        event_total=event_total, event_done_total=event_total)
+# End Function
 
 @user.route('login/', methods=['GET', 'POST'])
 @not_logged_in('user.profile')
@@ -39,29 +41,33 @@ def login():
     if request.method == 'POST':
         if not form.validate_on_submit():
             return render_template('user/forms-A.html', title='Login', form=form)
+        # ---
 
         user = User.query.filter(User.email.ilike(f'{form.email.data}')).first()
-        if not user:
+        if not user: # Not Found User
             flash("Something went wrong. Please try again")
             return render_template('user/forms-A.html', title='Login', form=form)
-        
+        # ---
+
         login_user(user, remember=form.remember.data)
 
+        # Has the user confirmed her email?
         user_not_auth = NotUserAuthenticated.query.filter(
                 NotUserAuthenticated.user_id.like(user.id)).first()
-                
+
         if user_not_auth:
             return redirect(url_for('user.confirm_registration'))
-
+        # ---
         
         flash('You have successfully logged in' , 'info')
+        
         __next = request.args.get('next', type=str,
                                   default=url_for('user.profile'))
         return redirect(__next)
-
-    return render_template('user/forms-A.html', title='Login',
-                           form=form)
-
+    # ---
+    return render_template('user/forms-A.html',
+                title='Login', form=form)
+# End Function
 
 @user.route('register/', methods=['GET', 'POST'])
 @not_logged_in('user.profile')
@@ -70,16 +76,16 @@ def register():
     if request.method == 'POST':
         if not form.validate_on_submit():
             return render_template('user/forms-A.html', title='Register', form=form)
-        
+        # ---
+
         # Remaining: Email confirmation must be added
-        
         NewUser = User(
             full_name=form.full_name.data,
             email=form.email.data,
             password=bcrypt.generate_password_hash(
-                            password=form.password.data)
-            )
-        
+                            password=form.password.data))
+        # ---
+
         NewUser.groups = GroupManager().return_group_in_pickle
         
         # Create Roll Task And Event 
@@ -87,13 +93,12 @@ def register():
             TasksManager().return_tasks_in_pickle)
         NewEvent = Event(
             TasksManager().return_tasks_in_pickle)
+        # ---
 
         # Create Relation 
         NewTask.user = NewUser
         NewEvent.user = NewUser
-
-
-        
+        # ---
         try:
             db.session.add_all([NewEvent, NewTask, NewUser])
             db.session.commit()
@@ -101,7 +106,7 @@ def register():
             # Add new user to unauthenticated users
             db.session.add(NotUserAuthenticated(NewUser.id))
             db.session.commit()
-
+            # ---
         except IntegrityError:
             db.session.rollback()
             flash('Error! Try again (probably because the email you entered already exists)')
@@ -111,22 +116,17 @@ def register():
             flash('Your account has been created successfully')
             return redirect(url_for('user.login'))
 
-    return render_template('user/forms-A.html', title='Register',
-                           form=form)
-
+    return render_template('user/forms-A.html', 
+                    title='Register', form=form)
+# End Function
 
 @user.route('logout/', methods=['GET'])
 @login_required()
 def logout():
-    user = current_user
-    if not user :
-        flash('A rare problem occurred, logout failed! Try again ...')
-        return redirect(url_for('user.profile'))
-    
     logout_user()
     flash('Logout was successful.')
     return redirect('/')
-
+# End Function
 
 @user.route('settings/', methods=['GET', 'POST'])
 @login_required(_next_endpoint='user.settings')
@@ -159,13 +159,15 @@ def settings():
         
         if _password_must_be_correct :
             user.password = bcrypt.generate_password_hash(form.password.data)
-    
+        # ---
+
         if form.email.data != user.email:
             # Remaining: Email confirmation must be added
             user.email = form.email.data
             # Add new user to unauthenticated users
             db.session.add(NotUserAuthenticated(user.id))
-        
+        # ---
+
         try:
             db.session.commit()
         except IntegrityError:
@@ -179,7 +181,7 @@ def settings():
 
     return render_template('user/settings.html', title='Setting Account',
                            form=form, submit_button='Update')
-
+# End Function
 
 @user.route('/delete', methods=['GET'])
 @login_required('user.profile')
@@ -193,23 +195,34 @@ def delete():
     db.session.commit()
 
     return redirect(url_for('user.login'))
-
+# End Function
 
 
 @user.route('/confirm/')
 @login_required('user.confirm_registration')
 def confirm_registration():
     
+    # Get Datas
     email = current_user.email
     resend = request.args.get(key='resend')
     token = request.args.get(key='token', type=str)
 
+    # To resend the email
     if resend :
+        # for beauty and not sending flash messages
         if token:
-            return redirect(url_for('user.confirm_registration', token=token))
+            return redirect(
+                url_for('user.confirm_registration', token=token))
+        # ---
         flash('The authentication email has been re-sent to your email address')
+    # ---
 
+    # Request without arguments
     if (not token):
+        """
+        If you send a request to this room without a token argument 
+        (an authentication token will be created and sent)
+        """
         token = add_to_redis(current_user, 'register')
         send_registration_message(current_user, token)
         
@@ -217,32 +230,37 @@ def confirm_registration():
         msg=f"""Account activation link sent to your email address: 
                 {Configs.MAIL_USERNAME} 
                 Please follow the link inside to continue.""")
-    
+    # ---
 
-    
     user_auth = NotUserAuthenticated.query.filter(
         NotUserAuthenticated.user_id.like(current_user.id)).first()
-    
+
+    # If the user is active    
     if not user_auth:
         return render_template(
             'user/email-confirmation-required.html',
             msg=f"This user is already activated. <br> <a href='{url_for('user.profile')}'>Profile</a>")
-    
-    token_from_redis = get_from_redis(current_user, 'register')
+    # ---
 
+    # Checking the validity of the token
+    token_from_redis = get_from_redis(current_user, 'register')
+    
     if (not token_from_redis) or \
         (str(token) != token_from_redis.decode('UTF-8')):
         return render_template(
             'user/email-confirmation-required.html',
             msg=f"The token has expired!")
+    # ---
 
+    # Activate the user
     delete_from_redis(current_user, 'register')
     db.session.delete(user_auth)
     db.session.commit()
+    # ---
 
     flash('Your email has been successfully verified! welcome')
     return redirect(url_for('user.profile'))
-    
+# End Function
     
 
 

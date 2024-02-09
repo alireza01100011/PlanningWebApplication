@@ -1,6 +1,7 @@
 from flask_wtf import FlaskForm
 from wtforms.validators import DataRequired, Length
-from wtforms.fields import StringField, TextAreaField, SelectField
+from wtforms.fields import (StringField,
+                        TextAreaField, SelectField)
 
 from utlis.forms import _get_fields, MultiCheckboxField
 
@@ -44,7 +45,7 @@ class EventForm(FlaskForm):
 
     def get_fields(self):
         return _get_fields(self)
-
+# End
 
 def validate_event_form(data:dict)-> bool:
     """
@@ -89,7 +90,7 @@ def validate_event_form(data:dict)-> bool:
     # --- Test 03 --- #
     
     return True # The form is approved
-
+# End
 
 
 if __name__ == '__main__':

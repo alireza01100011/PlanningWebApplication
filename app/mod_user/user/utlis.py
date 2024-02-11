@@ -59,8 +59,7 @@ def send_registration_message(user:User, token:int)-> None:
     user -> User
     toke -> int[123456]
     """
-    url_email_confirm = url_for('user.confirm_registration', 
-                token=token,_external=True)
+    url_email_confirm = f"http://{Configs.SERVER_NAME_MAIL}{url_for('user.confirm_registration', token=token)}"
     
     msg  = EmailMessage()
     msg['Subject'] = 'Welcoome - Your email verification code'

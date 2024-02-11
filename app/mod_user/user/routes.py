@@ -25,6 +25,14 @@ from dateabase_models._models import Event, Task
 @login_required('user.profile')
 def profile():
     user:User = current_user
+    
+    # Has the user confirmed her email?
+    user_not_auth = NotUserAuthenticated.query.filter(
+            NotUserAuthenticated.user_id.like(user.id)).first()
+
+    if user_not_auth:
+        return redirect(url_for('user.confirm_registration'))
+
     task_total, task_done_total = user.total_task, user.total_task_done
     event_total, event_done_total = user.total_event, user.total_event
 

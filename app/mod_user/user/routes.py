@@ -40,6 +40,7 @@ def login():
     form = LoginForm()
     if request.method == 'POST':
         if not form.validate_on_submit():
+            flash('Email or password is not valid!!!')
             return render_template('user/forms-A.html', title='Login', form=form)
         # ---
 
@@ -75,6 +76,7 @@ def register():
     form = RegisterForm()
     if request.method == 'POST':
         if not form.validate_on_submit():
+            flash('The information is invalid')
             return render_template('user/forms-A.html', title='Register', form=form)
         # ---
 
